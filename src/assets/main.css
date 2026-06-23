@@ -1,0 +1,170 @@
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import './icomoon.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #17242D;
+  --surface: #2B383F;
+  --surface-2: #334850;
+  --border: #3a474f;
+  --text: #BDC2C4;
+  --text-muted: #91979A;
+  --accent: #80F5D2;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  height: 100%;
+}
+
+/* VueFlow overrides */
+.vue-flow__renderer {
+  z-index: 0;
+}
+
+.vue-flow__controls {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px #0006;
+}
+
+.vue-flow__controls-button {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.vue-flow__controls-button:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.vue-flow__controls-button:last-child {
+  border-bottom: none;
+}
+
+.vue-flow__edge-path {
+  stroke: #4F5E65;
+  stroke-width: 2;
+}
+
+.vue-flow__edge.selected .vue-flow__edge-path {
+  stroke: #BDC2C4;
+}
+
+.vue-flow__edge:hover .vue-flow__edge-path {
+  stroke: var(--accent);
+}
+
+.vue-flow__edge.edge-content .vue-flow__edge-path {
+  stroke: rgba(128, 245, 210, 0.4);
+}
+
+.vue-flow__edge.edge-content.selected .vue-flow__edge-path,
+.vue-flow__edge.edge-content:hover .vue-flow__edge-path {
+  stroke: #80F5D2;
+}
+
+.vue-flow__edge.edge-modifier .vue-flow__edge-path {
+  stroke: rgba(255, 111, 91, 0.4);
+}
+
+.vue-flow__edge.edge-modifier.selected .vue-flow__edge-path,
+.vue-flow__edge.edge-modifier:hover .vue-flow__edge-path {
+  stroke: #FF6F5B;
+}
+
+.vue-flow__connection-path {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.vue-flow__connection-path.invalid {
+  stroke: #FF6F5B;
+}
+
+.vue-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  border: 2px solid #4F5E65 !important;
+  background: #17242D !important;
+  transition: border-color 0.1s, box-shadow 0.1s;
+  z-index: 10 !important;
+}
+
+.vue-flow__handle:hover,
+.vue-flow__handle.connectable:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(128, 245, 210, 0.25);
+}
+
+
+/* Content input handle on Container — teal to match content category */
+.content-handle {
+  border-color: #80F5D2 !important;
+}
+
+.content-handle:hover,
+.content-handle.connectable:hover {
+  border-color: #80F5D2 !important;
+  box-shadow: 0 0 0 3px rgba(128, 245, 210, 0.25) !important;
+}
+
+/* Modifier handles are square + red so they're visually distinct from round flow handles */
+.modifier-handle {
+  border-radius: 2px !important;
+  border-color: #FF6F5B !important;
+}
+
+.modifier-handle:hover,
+.modifier-handle.connectable:hover {
+  border-color: #FF6F5B !important;
+  box-shadow: 0 0 0 3px rgba(255, 111, 91, 0.25) !important;
+}
+
+.vue-flow__node.selected .base-node {
+  border-color: rgba(128, 245, 210, 0.35) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Type scale */
+.text-title    { font-size: 20px; font-weight: 500; }
+.text-subtitle { font-size: 16px; font-weight: 500; }
+.text-body     { font-size: 14px; font-weight: 400; }
+.text-small    { font-size: 12px; font-weight: 400; }
