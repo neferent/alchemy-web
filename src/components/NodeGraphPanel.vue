@@ -35,7 +35,7 @@ import ToNumberNode from '@/nodes/ToNumberNode.vue'
 import ToStringNode from '@/nodes/ToStringNode.vue'
 import EndSignalNode from '@/nodes/EndSignalNode.vue'
 
-const nodeTypes = {
+const nodeTypes: Record<string, any> = {
   'on-event':   OnEventNode,
   'on-timer':   OnTimerNode,
   'transient':  TransientNode,
@@ -81,6 +81,7 @@ function onContextMenu(e: MouseEvent) {
 function onContextMenuSelect(type: string) {
   if (!selectedArea.value) return
   const newNode = { id: `${type}-${Date.now()}`, type, position: ctxMenu.value.flowPos, data: defaultDataForType(type) }
+  // @ts-expect-error Vue Flow Node type causes excessively deep instantiation
   nodes.value = [...nodes.value, newNode]
   persist()
 }
@@ -173,9 +174,9 @@ function onKeyDown(e: KeyboardEvent) {
     const tag = (e.target as HTMLElement).tagName
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
     e.preventDefault()
-    const selectedEdges = edges.value.filter(ed => ed.selected)
+    const selectedEdges = edges.value.filter(ed => (ed as any).selected)
     if (selectedEdges.length) {
-      edges.value = edges.value.filter(ed => !ed.selected)
+      edges.value = edges.value.filter(ed => !(ed as any).selected)
       persist()
     }
     deleteSelectedNode()

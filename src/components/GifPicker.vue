@@ -46,7 +46,7 @@ onMounted(load)
       v-model="query"
       type="text"
       class="gif-search"
-      placeholder="Search GIFs..."
+      placeholder="Search KLIPY"
     />
     <div class="gif-grid" @scroll="(e) => { const t = e.target as HTMLElement; if (t.scrollTop + t.clientHeight >= t.scrollHeight - 40 && !loading) loadMore() }">
       <div
@@ -89,6 +89,7 @@ onMounted(load)
 .gif-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-auto-rows: min-content;
   gap: 4px;
   max-height: 200px;
   overflow-y: auto;
@@ -102,6 +103,7 @@ onMounted(load)
   border: 2px solid transparent;
   transition: border-color 120ms ease;
   aspect-ratio: 16 / 9;
+  min-height: 0;
 }
 .gif-item:hover { border-color: var(--accent); }
 
@@ -124,6 +126,7 @@ onMounted(load)
 .gif-powered {
   text-align: right;
   padding-top: 2px;
+  padding-right: 12px;
 }
 .powered-logo {
   height: 12px;

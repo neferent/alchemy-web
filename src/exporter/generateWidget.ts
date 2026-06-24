@@ -191,7 +191,7 @@ export function generateJS(
 
   injectGoogleFonts();
 
-  console.log('[Alchemy] loaded. Areas:', AREAS.map(function(a){return a.id+' ('+a.name+')'}).join(', '));
+  var DEBUG = (window.location.search || '').indexOf('debug') !== -1;
 
   function outEdges(edges, nodeId) {
     return edges.filter(function (e) { return e.source === nodeId; });
@@ -458,7 +458,7 @@ export function generateJS(
     playAudio(cmd);
     var areaEl = document.getElementById('area-' + cmd.areaId);
     if (!areaEl || !cmd.lifecycleNode) {
-      console.log('[Alchemy] renderArea skip — areaEl:', !!areaEl, 'lifecycleNode:', !!cmd.lifecycleNode);
+      if (DEBUG) console.log('[Alchemy] renderArea skip — areaEl:', !!areaEl, 'lifecycleNode:', !!cmd.lifecycleNode);
       return;
     }
 
@@ -469,7 +469,7 @@ export function generateJS(
     wrapper.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
 
     var elements = ELEMENTS[cmd.lifecycleNode.id] || [];
-    console.log('[Alchemy] renderArea:', cmd.areaId, 'lifecycleNode:', cmd.lifecycleNode.id, 'elements:', elements.length);
+    if (DEBUG) console.log('[Alchemy] renderArea:', cmd.areaId, 'lifecycleNode:', cmd.lifecycleNode.id, 'elements:', elements.length);
     elements.forEach(function (el) { wrapper.appendChild(buildElementEl(el, cmd.areaId, eventData, cmd.vars)); });
 
     contentEdges(GRAPHS[cmd.areaId].edges, cmd.lifecycleNode.id).forEach(function(e) {
@@ -516,7 +516,7 @@ export function generateJS(
   function fireInitTriggers() {
     AREAS.forEach(function (area) {
       var triggerId = findEventTrigger(area.id, 'init');
-      console.log('[Alchemy] init trigger for', area.name + ':', triggerId || 'none');
+      if (DEBUG) console.log('[Alchemy] init trigger for', area.name + ':', triggerId || 'none');
       if (!triggerId) return;
       var cmd = executeGraph(area.id, triggerId, {});
       if (cmd) renderArea(cmd, {});
@@ -547,13 +547,13 @@ export function generateJS(
 
   document.addEventListener('onEventReceived', function (obj) {
     var detail = obj.detail || obj;
-    console.log('[Alchemy] onEventReceived:', JSON.stringify(detail));
+    if (DEBUG) console.log('[Alchemy] onEventReceived:', JSON.stringify(detail));
     var parsed = normalizeEvent(detail);
-    if (!parsed) { console.log('[Alchemy] could not parse event'); return; }
-    console.log('[Alchemy] eventType:', parsed.eventType, 'tipper:', parsed.eventData.tipper, 'amount:', parsed.eventData.amount);
+    if (!parsed) { if (DEBUG) console.log('[Alchemy] could not parse event'); return; }
+    if (DEBUG) console.log('[Alchemy] eventType:', parsed.eventType, 'tipper:', parsed.eventData.tipper, 'amount:', parsed.eventData.amount);
     AREAS.forEach(function (area) {
       var triggerId = findEventTrigger(area.id, parsed.eventType);
-      if (!triggerId) { console.log('[Alchemy] no trigger for', parsed.eventType, 'in', area.name); return; }
+      if (!triggerId) { if (DEBUG) console.log('[Alchemy] no trigger for', parsed.eventType, 'in', area.name); return; }
       var cmd = executeGraph(area.id, triggerId, parsed.eventData);
       if (!cmd) return;
       if (cmd.delayMs > 0) {
@@ -568,7 +568,7 @@ export function generateJS(
   document.addEventListener('onWidgetLoad', function () {
     if (initDone) return;
     initDone = true;
-    console.log('[Alchemy] onWidgetLoad fired');
+    if (DEBUG) console.log('[Alchemy] onWidgetLoad fired');
     fireInitTriggers();
     setupTimers();
   });

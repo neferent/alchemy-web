@@ -372,7 +372,7 @@ export function executeGraph(
   vars: Record<string, unknown> = {},
 ): ExecuteResult {
   const trigger = nodes.find(n => n.type === 'on-event' && n.data.event === eventType)
-  if (!trigger) return { scene: null, updates: [], audio: [] }
+  if (!trigger) return { scene: null, updates: [], audio: [], delayMs: 0 }
   return _execute(areaId, nodes, edges, trigger, allLayouts, allElements, ev, vars)
 }
 
@@ -388,6 +388,6 @@ export function executeGraphFromTrigger(
   vars: Record<string, unknown> = {},
 ): ExecuteResult {
   const trigger = nodes.find(n => n.id === triggerNodeId)
-  if (!trigger) return { scene: null, updates: [], audio: [] }
+  if (!trigger) return { scene: null, updates: [], audio: [], delayMs: 0 }
   return _execute(areaId, nodes, edges, trigger, allLayouts, allElements, ev, vars)
 }

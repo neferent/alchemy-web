@@ -300,6 +300,12 @@ const selectedLayoutItemId = computed({
   set: (v) => uiStore.selectLayoutItem(v),
 })
 
+function setItemZ(itemId: string, z: number) {
+  if (!layoutParentId.value) return
+  const current = layoutStore.getLayout(layoutParentId.value, itemId)
+  layoutStore.setLayout(layoutParentId.value, itemId, { ...current, z })
+}
+
 function deselectLayoutItem() {
   uiStore.selectLayoutItem(null)
   if (layoutAreaId.value) canvasStore.selectArea(layoutAreaId.value)
@@ -423,10 +429,10 @@ function loadGoogleFont(family: string) {
 function textStyle(data: Record<string, unknown>) {
   loadGoogleFont(data.fontFamily as string)
   return {
-    ...(data.fontSize   && { fontSize:   `${data.fontSize}px` }),
-    ...(data.fontFamily && { fontFamily:  data.fontFamily as string }),
-    ...(data.fontWeight && { fontWeight:  String(data.fontWeight) }),
-    ...(data.color      && { color:       data.color as string }),
+    ...(data.fontSize   ? { fontSize:   `${data.fontSize}px` } : {}),
+    ...(data.fontFamily ? { fontFamily:  data.fontFamily as string } : {}),
+    ...(data.fontWeight ? { fontWeight:  String(data.fontWeight) } : {}),
+    ...(data.color      ? { color:       data.color as string } : {}),
   }
 }
 
