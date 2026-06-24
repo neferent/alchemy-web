@@ -127,7 +127,7 @@ export interface ModifierStyles {
 export interface ContentItem {
   kind: 'content'
   id: string
-  type: 'image' | 'text' | 'audio' | 'video' | 'color' | 'gif'
+  type: 'image' | 'text' | 'audio' | 'video' | 'color' | 'gif' | 'clip' | 'sticker'
   data: Record<string, unknown>
   modifiers: ModifierStyles
   zIndex: number

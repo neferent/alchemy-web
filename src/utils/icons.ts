@@ -1,5 +1,6 @@
 import {
   BellRing,
+  Clapperboard,
   Clock,
   CircleStop,
   Circle,
@@ -38,12 +39,14 @@ import {
   Layers,
   Plus,
   Timer,
+  Sticker,
 } from 'lucide-vue-next'
 import type { Component } from 'vue'
 
 export const ICONS: Record<string, Component> = {
   'bell-ring': BellRing,
   'clock': Clock,
+  'clapperboard': Clapperboard,
   'circle-stop': CircleStop,
   'circle': Circle,
   'lock': Lock,
@@ -81,4 +84,5 @@ export const ICONS: Record<string, Component> = {
   'layers': Layers,
   'plus': Plus,
   'timer': Timer,
+  'sticker': Sticker,
 }

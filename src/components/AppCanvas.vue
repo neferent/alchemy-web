@@ -250,7 +250,7 @@ const CONTAINER_NODE_TYPES = new Set(['transient', 'persistent', 'container'])
 const HANDLES = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'] as const
 const MIN_LAYOUT_SIZE = 5
 
-const ITEM_LABELS: Record<string, string> = { image: 'Image', text: 'Text', video: 'Video', color: 'Color', gif: 'GIF', container: 'Container' }
+const ITEM_LABELS: Record<string, string> = { image: 'Image', text: 'Text', video: 'Video', color: 'Color', gif: 'GIF', clip: 'Clip', sticker: 'Sticker', container: 'Container' }
 
 // Which area contains the currently selected node?
 const layoutAreaId = computed<string | null>(() => {
@@ -469,10 +469,10 @@ function elementEffectClass(el: ElementData) {
 // ── Element type drag-onto-canvas ─────────────────────────────────────────────
 
 const ELEMENT_TYPE_ICONS: Record<string, string> = {
-  image: 'image', text: 'type', video: 'video', color: 'palette', gif: 'film',
+  image: 'image', text: 'type', video: 'video', color: 'palette', gif: 'film', clip: 'clapperboard', sticker: 'sticker',
 }
 const ELEMENT_TYPE_LABELS: Record<string, string> = {
-  image: 'Image', text: 'Text', video: 'Video', color: 'Color', gif: 'GIF',
+  image: 'Image', text: 'Text', video: 'Video', color: 'Color', gif: 'GIF', clip: 'Clip', sticker: 'Sticker',
 }
 
 const isElementTypeDragOver = ref(false)
@@ -593,7 +593,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                   :class="modifierClass(child)"
                   :style="{ left: `${child.x}%`, top: `${child.y}%`, width: `${child.w}%`, height: `${child.h}%`, zIndex: child.zIndex, ...modifierStyle(child) }"
                 >
-                  <img v-if="child.type === 'image' || child.type === 'gif'" :src="child.data.src as string" class="fill" />
+                  <img v-if="child.type === 'image' || child.type === 'gif' || child.type === 'clip' || child.type === 'sticker'" :src="child.data.src as string" class="fill" />
                   <video v-else-if="child.type === 'video'" :src="child.data.src as string" class="fill" :autoplay="child.data.autoplay as boolean" :loop="child.data.loop as boolean" :muted="child.data.muted as boolean" />
                   <div v-else-if="child.type === 'text'" class="text-content fill" :style="textStyle(child.data)">{{ child.data.content }}</div>
                   <div v-else-if="child.type === 'color'" class="fill" :style="{ backgroundColor: child.data.color as string }" />
@@ -606,7 +606,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                 :class="modifierClass(item as ContentItem)"
                 :style="{ left: `${item.x}%`, top: `${item.y}%`, width: `${item.w}%`, height: `${item.h}%`, zIndex: item.zIndex, ...modifierStyle(item as ContentItem) }"
               >
-                <img v-if="item.type === 'image' || item.type === 'gif'" :src="(item as ContentItem).data.src as string" class="fill" />
+                <img v-if="item.type === 'image' || item.type === 'gif' || item.type === 'clip' || item.type === 'sticker'" :src="(item as ContentItem).data.src as string" class="fill" />
                 <video v-else-if="item.type === 'video'" :src="(item as ContentItem).data.src as string" class="fill" :autoplay="(item as ContentItem).data.autoplay as boolean" :loop="(item as ContentItem).data.loop as boolean" :muted="(item as ContentItem).data.muted as boolean" />
                 <div v-else-if="item.type === 'text'" class="text-content fill" :style="textStyle((item as ContentItem).data)">{{ (item as ContentItem).data.content }}</div>
                 <div v-else-if="item.type === 'color'" class="fill" :style="{ backgroundColor: (item as ContentItem).data.color as string }" />
@@ -670,7 +670,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                   @mouseenter="uiStore.hoverLayoutItem(item.id)"
                   @mouseleave="uiStore.hoverLayoutItem(null)"
                 >
-                  <img v-if="(item.type === 'image' || item.type === 'gif') && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
+                  <img v-if="(item.type === 'image' || item.type === 'gif' || item.type === 'clip' || item.type === 'sticker') && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
                   <div v-else-if="item.type === 'video' && (item.data as ElementData).src" class="item-placeholder fill">▶ Video</div>
                   <div v-else-if="item.type === 'text'" class="text-content fill" :style="layoutTextStyle(item.data as ElementData)">{{ (item.data as ElementData).content }}</div>
                   <div v-else-if="item.type === 'color'" class="fill" :style="{ backgroundColor: (item.data as ElementData).fillColor }" />
@@ -736,7 +736,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                     @mouseenter="uiStore.hoverLayoutItem(item.id)"
                     @mouseleave="uiStore.hoverLayoutItem(null)"
                   >
-                    <img v-if="(item.type === 'image' || item.type === 'gif') && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
+                    <img v-if="(item.type === 'image' || item.type === 'gif' || item.type === 'clip' || item.type === 'sticker') && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
                     <div v-else-if="item.type === 'text'" class="text-content fill" :style="layoutTextStyle(item.data as ElementData)">{{ (item.data as ElementData).content }}</div>
                     <div v-else-if="item.type === 'color'" class="fill" :style="{ backgroundColor: (item.data as ElementData).fillColor }" />
                     <div v-else class="item-placeholder fill">{{ ITEM_LABELS[item.type] ?? item.type }}</div>

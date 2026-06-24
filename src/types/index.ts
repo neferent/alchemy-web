@@ -54,7 +54,7 @@ export const NODE_TYPES: NodeTypeDefinition[] = [
 // Visual elements (image / text / video / color) are no longer graph nodes.
 // They live in the elements store, keyed by container nodeId.
 
-export type ElementType = 'image' | 'text' | 'video' | 'color' | 'gif'
+export type ElementType = 'image' | 'text' | 'video' | 'color' | 'gif' | 'clip' | 'sticker'
 
 export interface ElementEffects {
   opacity: number

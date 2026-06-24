@@ -9,6 +9,8 @@ import type { ElementData, ElementType } from '@/types'
 import { sanitizeUrl } from '@/utils/sanitize'
 import SearchSelect from './SearchSelect.vue'
 import GifPicker from './GifPicker.vue'
+import ClipPicker from './ClipPicker.vue'
+import StickerPicker from './StickerPicker.vue'
 import { ICONS } from '@/utils/icons'
 
 const POPULAR_FONTS = [
@@ -103,19 +105,23 @@ function loadFont(family: string) {
 watch(() => selectedElement.value?.fontFamily, (f) => { if (f) loadFont(f) }, { immediate: true })
 
 const TYPE_ICONS: Record<ElementType, string> = {
-  image: 'image',
-  text:  'type',
-  video: 'video',
-  color: 'palette',
-  gif:   'film',
+  image:   'image',
+  text:    'type',
+  video:   'video',
+  color:   'palette',
+  gif:     'film',
+  clip:    'clapperboard',
+  sticker: 'sticker',
 }
 
 const TYPE_LABELS: Record<ElementType, string> = {
-  image: 'Image',
-  text:  'Text',
-  video: 'Video',
-  color: 'Color',
-  gif:   'GIF',
+  image:   'Image',
+  text:    'Text',
+  video:   'Video',
+  color:   'Color',
+  gif:     'GIF',
+  clip:    'Clip',
+  sticker: 'Sticker',
 }
 
 // Section collapse state
@@ -161,7 +167,7 @@ function onLayerDragEnd() {
   dragOverDisplay.value = null
 }
 
-const ADD_KEY_MAP: Record<string, ElementType> = { i: 'image', t: 'text', v: 'video', c: 'color', g: 'gif' }
+const ADD_KEY_MAP: Record<string, ElementType> = { i: 'image', t: 'text', v: 'video', c: 'color', g: 'gif', l: 'clip', s: 'sticker' }
 
 function onKeyDown(e: KeyboardEvent) {
   const tag = (e.target as HTMLElement).tagName
@@ -227,20 +233,41 @@ const ANIMATIONS = [
         <span class="section-title">Elements</span>
       </div>
       <template v-if="elementsOpen">
-        <div class="add-row">
-          <button
-            v-for="type in (['image', 'text', 'video', 'color', 'gif'] as ElementType[])"
-            :key="type"
-            class="add-btn"
-            :title="'Drag onto canvas or click to add ' + TYPE_LABELS[type]"
-            draggable="true"
-            @dragstart="(e) => { e.dataTransfer!.setData('application/alchemy-element-type', type); e.dataTransfer!.effectAllowed = 'copy'; uiStore.setDraggingElementType(type) }"
-            @dragend="uiStore.setDraggingElementType(null)"
-            @click="addElement(type)"
-          >
-            <component :is="ICONS[TYPE_ICONS[type]]" :size="14" />
-            <span>{{ TYPE_LABELS[type] }}</span>
-          </button>
+        <div class="add-section">
+          <div class="add-section-label">Media <span class="add-section-tag">KLIPY</span></div>
+          <div class="add-row">
+            <button
+              v-for="type in (['gif', 'clip', 'sticker'] as ElementType[])"
+              :key="type"
+              class="add-btn add-btn--media"
+              :title="'Drag onto canvas or click to add ' + TYPE_LABELS[type]"
+              draggable="true"
+              @dragstart="(e) => { e.dataTransfer!.setData('application/alchemy-element-type', type); e.dataTransfer!.effectAllowed = 'copy'; uiStore.setDraggingElementType(type) }"
+              @dragend="uiStore.setDraggingElementType(null)"
+              @click="addElement(type)"
+            >
+              <component :is="ICONS[TYPE_ICONS[type]]" :size="14" />
+              <span>{{ TYPE_LABELS[type] }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="add-section">
+          <div class="add-section-label">Custom</div>
+          <div class="add-row">
+            <button
+              v-for="type in (['image', 'video', 'text', 'color'] as ElementType[])"
+              :key="type"
+              class="add-btn"
+              :title="'Drag onto canvas or click to add ' + TYPE_LABELS[type]"
+              draggable="true"
+              @dragstart="(e) => { e.dataTransfer!.setData('application/alchemy-element-type', type); e.dataTransfer!.effectAllowed = 'copy'; uiStore.setDraggingElementType(type) }"
+              @dragend="uiStore.setDraggingElementType(null)"
+              @click="addElement(type)"
+            >
+              <component :is="ICONS[TYPE_ICONS[type]]" :size="14" />
+              <span>{{ TYPE_LABELS[type] }}</span>
+            </button>
+          </div>
         </div>
       </template>
 
@@ -308,7 +335,30 @@ const ANIMATIONS = [
         <!-- GIF -->
         <template v-else-if="selectedElement.type === 'gif'">
           <div class="prop-group">
+            <div v-if="selectedElement.src" class="media-preview">
+              <img :src="selectedElement.src" alt="" />
+            </div>
             <GifPicker @select="(url) => patchSrc(url)" />
+          </div>
+        </template>
+
+        <!-- Clip -->
+        <template v-else-if="selectedElement.type === 'clip'">
+          <div class="prop-group">
+            <div v-if="selectedElement.src" class="media-preview">
+              <img :src="selectedElement.src" alt="" />
+            </div>
+            <ClipPicker @select="(url) => patchSrc(url)" />
+          </div>
+        </template>
+
+        <!-- Sticker -->
+        <template v-else-if="selectedElement.type === 'sticker'">
+          <div class="prop-group">
+            <div v-if="selectedElement.src" class="media-preview">
+              <img :src="selectedElement.src" alt="" />
+            </div>
+            <StickerPicker @select="(url) => patchSrc(url)" />
           </div>
         </template>
 
@@ -610,12 +660,39 @@ const ANIMATIONS = [
   max-width: 110px;
 }
 
+.add-section {
+  padding: 0;
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+.add-section-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 5px 10px 0;
+}
+
+.add-section-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 1px 4px;
+}
+
 .add-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
-  padding: 6px 8px;
-  border-bottom: 0.5px solid var(--border);
+  padding: 4px 8px 6px;
   flex-shrink: 0;
 }
 
@@ -633,13 +710,17 @@ const ANIMATIONS = [
   transition: all 120ms ease;
   white-space: nowrap;
 }
-.add-btn:last-child {
-  grid-column: 1 / -1;
-}
 .add-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-dim);
+}
+.add-btn--media {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--text);
+}
+.add-btn--media:hover {
+  border-color: var(--accent);
 }
 .klipy-icon {
   width: 14px;
@@ -827,12 +908,14 @@ const ANIMATIONS = [
   margin-top: 2px;
 }
 
-.img-preview {
+.img-preview,
+.media-preview {
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid var(--border);
 }
-.img-preview img {
+.img-preview img,
+.media-preview img {
   width: 100%;
   height: 54px;
   object-fit: cover;

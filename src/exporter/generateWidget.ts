@@ -319,7 +319,7 @@ export function generateJS(
     div.dataset.elementId = el.id;
     div.style.cssText = 'left:' + layout.x + '%;top:' + layout.y + '%;width:' + layout.w + '%;height:' + layout.h + '%;z-index:' + (layout.z || 0) + ';';
 
-    if (el.type === 'image' || el.type === 'gif') {
+    if (el.type === 'image' || el.type === 'gif' || el.type === 'clip' || el.type === 'sticker') {
       var img = document.createElement('img');
       img.src = el.src || '';
       img.alt = '';
