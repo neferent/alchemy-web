@@ -6,7 +6,7 @@ const props = defineProps<{ data: { interval: number } }>()
 </script>
 
 <template>
-  <BaseNode icon="icon-time" title="On Timer" category="trigger">
+  <BaseNode icon="timer" title="On Timer" category="trigger">
     <div class="node-field">
       <span class="node-label">Every (seconds)</span>
       <input v-model.number="props.data.interval" type="number" min="1" class="node-input" />

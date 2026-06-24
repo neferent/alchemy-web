@@ -2,6 +2,7 @@
 import { useNode, useVueFlow } from '@vue-flow/core'
 import type { NodeCategory } from '@/types'
 import { NODE_CATEGORY_COLORS } from '@/types'
+import { ICONS } from '@/utils/icons'
 
 defineProps<{
   icon: string
@@ -20,10 +21,10 @@ function deleteNode() {
 <template>
   <div class="base-node" :style="{ '--cat': NODE_CATEGORY_COLORS[category] }">
     <div class="node-header">
-      <span class="node-drag-handle"><i class="icon-move" /></span>
-      <span class="node-icon"><i :class="icon" /></span>
+      <span class="node-drag-handle"><component :is="ICONS['grip-vertical']" :size="13" /></span>
+      <span class="node-icon"><component :is="ICONS[icon]" :size="14" /></span>
       <span class="node-title">{{ title }}</span>
-      <button class="node-delete" title="Delete node" @click.stop="deleteNode"><i class="icon-close" /></button>
+      <button class="node-delete" title="Delete node" @click.stop="deleteNode"><component :is="ICONS['x']" :size="11" /></button>
     </div>
     <div class="node-body nodrag">
       <slot />
@@ -34,14 +35,14 @@ function deleteNode() {
 <style>
 /* Global so child nodes can override */
 .base-node {
-  min-width: 160px;
-  max-width: 220px;
-  background: #2B383F;
-  border: 1px solid #3a474f;
-  border-radius: 8px;
-  font-size: 12px;
+  min-width: 180px;
+  max-width: 240px;
+  background: var(--surface-3);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  font-size: 13px;
   color: var(--text);
-  box-shadow: 0 2px 12px #00000050;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
   position: relative;
   overflow: hidden;
 }
@@ -61,16 +62,15 @@ function deleteNode() {
   align-items: center;
   gap: 6px;
   padding: 7px 10px 6px;
-  border-bottom: 1px solid #3a474f;
+  border-bottom: 1px solid var(--border-strong);
 }
 
 .node-drag-handle {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  color: #4F5E65;
+  color: var(--text-faint);
   cursor: grab;
-  font-size: 12px;
 }
 
 .node-drag-handle:active {
@@ -81,13 +81,12 @@ function deleteNode() {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  font-size: 13px;
 }
 
 .node-title {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  color: #BDC2C4;
+  color: var(--text);
   letter-spacing: 0.1px;
   flex: 1;
 }
@@ -101,9 +100,8 @@ function deleteNode() {
   height: 16px;
   background: none;
   border: none;
-  border-radius: 3px;
-  color: #4F5E65;
-  font-size: 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
   line-height: 1;
   cursor: pointer;
   padding: 0;
@@ -111,8 +109,8 @@ function deleteNode() {
 }
 
 .node-delete:hover {
-  background: rgba(255, 111, 91, 0.15);
-  color: #FF6F5B;
+  background: var(--danger-tint);
+  color: var(--danger);
 }
 
 .base-node:hover .node-delete {
@@ -133,37 +131,37 @@ function deleteNode() {
 }
 
 .node-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: #91979A;
+  color: var(--text-muted);
 }
 
 .node-input,
 .node-select {
-  background: #17242D;
-  border: 1px solid #3a474f;
-  border-radius: 4px;
-  color: #BDC2C4;
-  font-size: 11px;
-  padding: 3px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  padding: 4px 6px;
   width: 100%;
   outline: none;
 }
 
 .node-input:focus,
 .node-select:focus {
-  border-color: #80F5D2;
+  border-color: var(--accent);
 }
 
 .node-select option {
-  background: #2B383F;
+  background: var(--surface-3);
 }
 
 .content-hint {
-  font-size: 9px;
-  color: #4F5E65;
+  font-size: 11px;
+  color: var(--text-faint);
   text-align: center;
   margin-top: 2px;
 }

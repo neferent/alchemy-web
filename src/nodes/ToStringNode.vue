@@ -7,7 +7,7 @@ const props = defineProps<{ data: { value: string; decimals: number } }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-text-transform" title="To String" category="logic">
+  <BaseNode icon="case-sensitive" title="To String" category="logic">
     <div class="node-field">
       <span class="node-label">Value</span>
       <input v-model="props.data.value" type="text" placeholder="{$hype}" class="node-input" />

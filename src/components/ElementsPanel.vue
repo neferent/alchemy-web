@@ -8,6 +8,8 @@ import { useUiStore } from '@/stores/ui'
 import type { ElementData, ElementType } from '@/types'
 import { sanitizeUrl } from '@/utils/sanitize'
 import SearchSelect from './SearchSelect.vue'
+import GifPicker from './GifPicker.vue'
+import { ICONS } from '@/utils/icons'
 
 const POPULAR_FONTS = [
   'Arial','Verdana','Tahoma','Trebuchet MS','Georgia','Times New Roman','Courier New','Impact',
@@ -101,10 +103,11 @@ function loadFont(family: string) {
 watch(() => selectedElement.value?.fontFamily, (f) => { if (f) loadFont(f) }, { immediate: true })
 
 const TYPE_ICONS: Record<ElementType, string> = {
-  image: 'icon-image',
-  text:  'icon-text',
-  video: 'icon-record',
-  color: 'icon-design',
+  image: 'image',
+  text:  'type',
+  video: 'video',
+  color: 'palette',
+  gif:   'film',
 }
 
 const TYPE_LABELS: Record<ElementType, string> = {
@@ -112,6 +115,7 @@ const TYPE_LABELS: Record<ElementType, string> = {
   text:  'Text',
   video: 'Video',
   color: 'Color',
+  gif:   'GIF',
 }
 
 // Section collapse state
@@ -157,7 +161,7 @@ function onLayerDragEnd() {
   dragOverDisplay.value = null
 }
 
-const ADD_KEY_MAP: Record<string, ElementType> = { i: 'image', t: 'text', v: 'video', c: 'color' }
+const ADD_KEY_MAP: Record<string, ElementType> = { i: 'image', t: 'text', v: 'video', c: 'color', g: 'gif' }
 
 function onKeyDown(e: KeyboardEvent) {
   const tag = (e.target as HTMLElement).tagName
@@ -225,7 +229,7 @@ const ANIMATIONS = [
       <template v-if="elementsOpen">
         <div class="add-row">
           <button
-            v-for="type in (['image', 'text', 'video', 'color'] as ElementType[])"
+            v-for="type in (['image', 'text', 'video', 'color', 'gif'] as ElementType[])"
             :key="type"
             class="add-btn"
             :title="'Drag onto canvas or click to add ' + TYPE_LABELS[type]"
@@ -234,7 +238,7 @@ const ANIMATIONS = [
             @dragend="uiStore.setDraggingElementType(null)"
             @click="addElement(type)"
           >
-            <i :class="TYPE_ICONS[type]" />
+            <component :is="ICONS[TYPE_ICONS[type]]" :size="14" />
             <span>{{ TYPE_LABELS[type] }}</span>
           </button>
         </div>
@@ -266,8 +270,8 @@ const ANIMATIONS = [
             @drop.prevent="onLayerDrop(displayIdx)"
             @dragend="onLayerDragEnd"
           >
-            <i class="icon-menu drag-grip" title="Drag to reorder" />
-            <i :class="TYPE_ICONS[el.type]" class="el-icon" />
+            <component :is="ICONS['grip-horizontal']" :size="12" class="drag-grip" title="Drag to reorder" />
+            <component :is="ICONS[TYPE_ICONS[el.type]]" :size="14" class="el-icon" />
             <span class="el-label">{{ TYPE_LABELS[el.type] }}</span>
             <button class="el-delete" title="Remove" @click.stop="removeElement(el.id)">✕</button>
           </div>
@@ -298,6 +302,13 @@ const ANIMATIONS = [
             <div v-if="selectedElement.src" class="img-preview">
               <img :src="selectedElement.src" alt="" />
             </div>
+          </div>
+        </template>
+
+        <!-- GIF -->
+        <template v-else-if="selectedElement.type === 'gif'">
+          <div class="prop-group">
+            <GifPicker @select="(url) => patchSrc(url)" />
           </div>
         </template>
 
@@ -513,7 +524,7 @@ const ANIMATIONS = [
     </template>
 
     <div v-else class="empty-state">
-      <i class="icon-group empty-icon" />
+      <component :is="ICONS['layers']" :size="28" class="empty-icon" />
       <div class="empty-state-content">
         <span class="empty-state-title">Elements</span>
         <span>Add a <strong>Transient</strong> or <strong>Persistent</strong> container node in the graph, then select it to add images, text, video, and colors here</span>
@@ -527,8 +538,8 @@ const ANIMATIONS = [
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #0f1c23;
-  border-right: 1px solid var(--border);
+  background: var(--surface-2);
+  border-right: 0.5px solid var(--border);
   overflow: hidden;
 }
 
@@ -537,7 +548,7 @@ const ANIMATIONS = [
   align-items: center;
   gap: 6px;
   padding: 8px 10px 6px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -546,57 +557,57 @@ const ANIMATIONS = [
   align-items: center;
   gap: 4px;
   padding: 5px 10px 4px;
-  background: #0a161c;
-  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  border-bottom: 0.5px solid var(--border);
   cursor: pointer;
   user-select: none;
   flex-shrink: 0;
 }
-.section-header:hover { background: #111f27; }
+.section-header:hover { background: var(--surface-3); }
 
 .section-chevron {
-  font-size: 10px;
-  transition: transform 0.15s;
+  font-size: 12px;
+  transition: transform 120ms ease;
   display: inline-block;
-  color: #4F5E65;
+  color: var(--text-faint);
 }
 .section-chevron.collapsed { transform: rotate(-90deg); }
 
 .section-title {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.7px;
   text-transform: uppercase;
-  color: #91979A;
+  color: var(--text-muted);
   flex: 1;
 }
 
 .section-count {
-  font-size: 9px;
-  color: #4F5E65;
-  background: #17242D;
-  border-radius: 3px;
+  font-size: 11px;
+  color: var(--text-faint);
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
   padding: 1px 5px;
 }
 
 .panel-title {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: #80F5D2;
+  color: var(--accent);
 }
 
 .node-badge {
-  font-size: 8px;
-  background: rgba(128, 245, 210, 0.12);
-  color: #80F5D2;
-  border-radius: 3px;
+  font-size: 10px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
   padding: 1px 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 90px;
+  max-width: 110px;
 }
 
 .add-row {
@@ -604,7 +615,7 @@ const ANIMATIONS = [
   grid-template-columns: 1fr 1fr;
   gap: 4px;
   padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -614,23 +625,30 @@ const ANIMATIONS = [
   gap: 5px;
   padding: 4px 6px;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 12px;
   cursor: pointer;
-  transition: all 0.1s;
+  transition: all 120ms ease;
   white-space: nowrap;
 }
+.add-btn:last-child {
+  grid-column: 1 / -1;
+}
 .add-btn:hover {
-  border-color: #80F5D2;
-  color: #80F5D2;
-  background: rgba(128, 245, 210, 0.06);
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+.klipy-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .element-list {
   flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
 }
 
 .element-row {
@@ -641,39 +659,39 @@ const ANIMATIONS = [
   cursor: pointer;
   border-left: 2px solid transparent;
   border-top: 1px solid transparent;
-  transition: background 0.1s, border-color 0.1s;
+  transition: background 120ms ease, border-color 120ms ease;
 }
-.element-row:hover { background: #17242D; }
+.element-row:hover { background: var(--surface-3); }
 .element-row.active {
-  background: #17242D;
-  border-left-color: #C57BFF;
+  background: var(--surface-3);
+  border-left-color: var(--cat-lifecycle);
 }
 .element-row.hovered {
-  background: #17242D;
-  border-left-color: rgba(197, 123, 255, 0.35);
+  background: var(--surface-3);
+  border-left-color: rgba(182, 138, 229, 0.35);
 }
 .element-row.drag-over {
-  border-top-color: #80F5D2;
+  border-top-color: var(--accent);
 }
 
 .drag-grip {
-  font-size: 10px;
-  color: #2B383F;
+  font-size: 12px;
+  color: var(--text-faint);
   cursor: grab;
   flex-shrink: 0;
 }
-.element-row:hover .drag-grip { color: #4F5E65; }
+.element-row:hover .drag-grip { color: var(--text-faint); }
 .element-row:active .drag-grip { cursor: grabbing; }
 
 .el-icon {
-  font-size: 12px;
-  color: #C57BFF;
-  width: 14px;
+  font-size: 14px;
+  color: var(--cat-lifecycle);
+  width: 16px;
   flex-shrink: 0;
 }
 
 .el-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
   flex: 1;
 }
@@ -682,24 +700,24 @@ const ANIMATIONS = [
 .el-delete {
   background: none;
   border: none;
-  color: #4F5E65;
-  font-size: 9px;
+  color: var(--text-faint);
+  font-size: 11px;
   cursor: pointer;
   padding: 2px 3px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   line-height: 1;
   opacity: 0;
-  transition: opacity 0.1s;
+  transition: opacity 120ms ease;
 }
 .element-row:hover .el-delete { opacity: 1; }
-.el-delete:hover { color: #ff6b6b; background: rgba(255,107,107,0.1); }
+.el-delete:hover { color: var(--danger); background: var(--danger-tint); }
 
 .empty-list {
-  font-size: 10px;
-  color: #4F5E65;
+  font-size: 12px;
+  color: var(--text-faint);
   padding: 8px 10px;
   text-align: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
 }
 
 .props-divider {
@@ -719,23 +737,23 @@ const ANIMATIONS = [
 .prop-row { display: flex; gap: 0; }
 
 .prop-label {
-  font-size: 9px;
-  color: #4F5E65;
+  font-size: 11px;
+  color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .prop-input {
-  background: #17242D;
-  border: 1px solid #3a474f;
-  border-radius: 3px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 11px;
-  padding: 3px 6px;
+  font-size: 13px;
+  padding: 4px 6px;
   outline: none;
   width: 100%;
 }
-.prop-input:focus { border-color: #80F5D2; }
+.prop-input:focus { border-color: var(--accent); }
 
 .prop-textarea {
   resize: vertical;
@@ -749,15 +767,15 @@ const ANIMATIONS = [
   width: 100%;
   height: 26px;
   padding: 1px 2px;
-  border: 1px solid #3a474f;
-  border-radius: 3px;
-  background: #17242D;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
   cursor: pointer;
 }
 
 .prop-slider {
   width: 100%;
-  accent-color: #80F5D2;
+  accent-color: var(--accent);
 }
 
 .prop-checks {
@@ -770,13 +788,13 @@ const ANIMATIONS = [
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
-  color: #91979A;
+  font-size: 12px;
+  color: var(--text-muted);
   cursor: pointer;
   user-select: none;
 }
 .prop-check input[type='checkbox'] {
-  accent-color: #80F5D2;
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -790,9 +808,9 @@ const ANIMATIONS = [
   width: 36px;
   height: 28px;
   padding: 2px;
-  border: 1px solid #3a474f;
-  border-radius: 3px;
-  background: #1a1a1a;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -804,15 +822,15 @@ const ANIMATIONS = [
 
 .color-swatch {
   height: 18px;
-  border-radius: 3px;
-  border: 1px solid #2a2a2a;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
   margin-top: 2px;
 }
 
 .img-preview {
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--border);
 }
 .img-preview img {
   width: 100%;
@@ -827,8 +845,8 @@ const ANIMATIONS = [
   gap: 4px;
   background: none;
   border: none;
-  color: #91979A;
-  font-size: 9px;
+  color: var(--text-muted);
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -837,27 +855,27 @@ const ANIMATIONS = [
   text-align: left;
   flex-shrink: 0;
 }
-.fx-toggle:hover { color: #BDC2C4; }
+.fx-toggle:hover { color: var(--text); }
 
 .fx-check-row {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
-  color: #91979A;
+  font-size: 12px;
+  color: var(--text-muted);
   cursor: pointer;
   user-select: none;
   padding: 3px 10px;
   flex-shrink: 0;
 }
 .fx-check-row input[type='checkbox'] {
-  accent-color: #80F5D2;
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
 .fx-chevron {
-  font-size: 10px;
-  transition: transform 0.15s;
+  font-size: 12px;
+  transition: transform 120ms ease;
   display: inline-block;
   transform: rotate(-90deg);
 }
@@ -876,7 +894,7 @@ const ANIMATIONS = [
 
 .empty-icon {
   font-size: 28px;
-  color: #2B383F;
+  color: var(--text-faint);
 }
 
 .empty-state-content {
@@ -886,19 +904,19 @@ const ANIMATIONS = [
 }
 
 .empty-state-title {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  color: #5a6a72;
+  color: var(--text-muted);
 }
 
 .empty-state-content span {
-  font-size: 10px;
-  color: #3a474f;
+  font-size: 12px;
+  color: var(--text-faint);
   line-height: 1.5;
 }
 
 .empty-state-content strong {
-  color: #80F5D2;
+  color: var(--accent);
   font-weight: 600;
 }
 </style>

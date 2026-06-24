@@ -265,7 +265,7 @@ function defaultDataForType(type: string): Record<string, unknown> {
           @nodes-change="onNodesChange"
           @edges-change="onEdgesChange"
         >
-          <Background pattern-color="#2B383F" :gap="20" :size="1" />
+          <Background pattern-color="#2c3238" :gap="20" :size="1" />
           <FlowControls />
         </VueFlow>
         <div v-if="!nodes.length" class="graph-empty-hint">
@@ -292,9 +292,9 @@ function defaultDataForType(type: string): Record<string, unknown> {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #17242D;
+  background: var(--surface-2);
   overflow: hidden;
-  border-top: 2px solid rgba(128, 245, 210, 0.15);
+  border-top: 2px solid var(--accent-dim);
 }
 
 .empty-state {
@@ -305,21 +305,21 @@ function defaultDataForType(type: string): Record<string, unknown> {
   justify-content: center;
   gap: 6px;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 14px;
   padding: 20px;
   text-align: center;
 }
 
 .empty-icon {
-  font-size: 28px;
-  color: #2B383F;
+  font-size: 32px;
+  color: var(--text-faint);
   margin-bottom: 4px;
 }
 
 .empty-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: #5a6a72;
+  color: var(--text-muted);
   margin-bottom: 2px;
 }
 
@@ -343,18 +343,18 @@ function defaultDataForType(type: string): Record<string, unknown> {
 }
 
 .graph-empty-hint p {
-  font-size: 12px;
-  color: #4F5E65;
+  font-size: 14px;
+  color: var(--text-faint);
   line-height: 1.4;
 }
 
 .graph-empty-hint strong {
-  color: #80F5D2;
+  color: var(--accent);
   font-weight: 600;
 }
 
 .hint-suggestion {
-  font-size: 11px !important;
-  color: #3a474f !important;
+  font-size: 13px !important;
+  color: var(--text-faint) !important;
 }
 </style>

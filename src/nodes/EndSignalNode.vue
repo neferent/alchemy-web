@@ -7,5 +7,5 @@ defineProps<{ data: Record<string, never> }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-stop-recording" title="End Signal" category="trigger" />
+  <BaseNode icon="circle-stop" title="End Signal" category="trigger" />
 </template>

@@ -7,7 +7,7 @@ const props = defineProps<{ data: { min: number; max: number; integer: boolean }
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-shuffle" title="Random" category="logic">
+  <BaseNode icon="shuffle" title="Random" category="logic">
     <div class="row">
       <div class="node-field" style="flex: 1">
         <span class="node-label">Min</span>
@@ -37,8 +37,8 @@ const props = defineProps<{ data: { min: number; max: number; integer: boolean }
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
-  color: #9ca3af;
+  font-size: 12px;
+  color: var(--text-muted);
   cursor: pointer;
 }
 .node-checkbox input {

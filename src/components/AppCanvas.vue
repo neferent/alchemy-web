@@ -10,6 +10,7 @@ import type { ItemLayout } from '@/stores/layout'
 import type { ElementData, ElementType } from '@/types'
 import type { ContentItem, ContainerItem, RenderItem } from '@/engine/executor'
 import AreaItem from './AreaItem.vue'
+import { ICONS } from '@/utils/icons'
 
 const canvasStore = useCanvasStore()
 const graphStore = useGraphStore()
@@ -249,7 +250,7 @@ const CONTAINER_NODE_TYPES = new Set(['transient', 'persistent', 'container'])
 const HANDLES = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'] as const
 const MIN_LAYOUT_SIZE = 5
 
-const ITEM_LABELS: Record<string, string> = { image: 'Image', text: 'Text', video: 'Video', color: 'Color', container: 'Container' }
+const ITEM_LABELS: Record<string, string> = { image: 'Image', text: 'Text', video: 'Video', color: 'Color', gif: 'GIF', container: 'Container' }
 
 // Which area contains the currently selected node?
 const layoutAreaId = computed<string | null>(() => {
@@ -462,10 +463,10 @@ function elementEffectClass(el: ElementData) {
 // ── Element type drag-onto-canvas ─────────────────────────────────────────────
 
 const ELEMENT_TYPE_ICONS: Record<string, string> = {
-  image: 'icon-image', text: 'icon-text', video: 'icon-record', color: 'icon-design',
+  image: 'image', text: 'type', video: 'video', color: 'palette', gif: 'film',
 }
 const ELEMENT_TYPE_LABELS: Record<string, string> = {
-  image: 'Image', text: 'Text', video: 'Video', color: 'Color',
+  image: 'Image', text: 'Text', video: 'Video', color: 'Color', gif: 'GIF',
 }
 
 const isElementTypeDragOver = ref(false)
@@ -529,10 +530,10 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   <div class="canvas-wrap">
     <div class="toolbar">
       <button class="tool-btn" :class="{ active: !drawMode }" title="Select (V)" @click="drawMode = false">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M1 1l5 12 2.5-4.5L13 6z" /></svg>
+        <component :is="ICONS['mouse-pointer-2']" :size="14" />
       </button>
       <button class="tool-btn" :class="{ active: drawMode }" title="Draw Area (A)" @click="drawMode = true">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="10" height="10" rx="1" /></svg>
+        <component :is="ICONS['square']" :size="14" />
       </button>
       <div class="toolbar-sep" />
       <span class="toolbar-hint">{{ drawMode ? 'Click and drag to draw an area' : 'Click an area to select it' }}</span>
@@ -558,42 +559,6 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
         @click="deselectAll"
       >
         <div class="canvas-grid" />
-
-        <!-- Empty state guide -->
-        <div v-if="!canvasStore.areas.length" class="canvas-empty-state">
-          <div class="empty-steps">
-            <div class="empty-step" :class="{ highlight: drawMode }">
-              <span class="step-number">1</span>
-              <div class="step-content">
-                <span class="step-title">Draw an area</span>
-                <span class="step-desc">Click the <strong>□</strong> tool above, then click &amp; drag on this canvas to create an overlay region</span>
-              </div>
-            </div>
-            <div class="empty-step">
-              <span class="step-number">2</span>
-              <div class="step-content">
-                <span class="step-title">Build a node graph</span>
-                <span class="step-desc">Drag nodes from the palette into the graph panel below to define triggers, transitions, and content</span>
-              </div>
-            </div>
-            <div class="empty-step">
-              <span class="step-number">3</span>
-              <div class="step-content">
-                <span class="step-title">Add elements</span>
-                <span class="step-desc">Select a container node, then add images, text, video, or colors to design your overlay</span>
-              </div>
-            </div>
-            <div class="empty-step">
-              <span class="step-number">4</span>
-              <div class="step-content">
-                <span class="step-title">Export</span>
-                <span class="step-desc">Export as a self-contained widget and paste it into Streamlabs as a Custom Widget source</span>
-              </div>
-            </div>
-          </div>
-          <div class="empty-or">or</div>
-          <button class="empty-open-btn" @click.stop="$emit('open-scene')">Open an existing .alchemy file</button>
-        </div>
 
         <!-- Runtime scene layers — rendered behind area controls -->
         <div
@@ -622,7 +587,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                   :class="modifierClass(child)"
                   :style="{ left: `${child.x}%`, top: `${child.y}%`, width: `${child.w}%`, height: `${child.h}%`, zIndex: child.zIndex, ...modifierStyle(child) }"
                 >
-                  <img v-if="child.type === 'image'" :src="child.data.src as string" class="fill" />
+                  <img v-if="child.type === 'image' || child.type === 'gif'" :src="child.data.src as string" class="fill" />
                   <video v-else-if="child.type === 'video'" :src="child.data.src as string" class="fill" :autoplay="child.data.autoplay as boolean" :loop="child.data.loop as boolean" :muted="child.data.muted as boolean" />
                   <div v-else-if="child.type === 'text'" class="text-content fill" :style="textStyle(child.data)">{{ child.data.content }}</div>
                   <div v-else-if="child.type === 'color'" class="fill" :style="{ backgroundColor: child.data.color as string }" />
@@ -635,7 +600,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                 :class="modifierClass(item as ContentItem)"
                 :style="{ left: `${item.x}%`, top: `${item.y}%`, width: `${item.w}%`, height: `${item.h}%`, zIndex: item.zIndex, ...modifierStyle(item as ContentItem) }"
               >
-                <img v-if="item.type === 'image'" :src="(item as ContentItem).data.src as string" class="fill" />
+                <img v-if="item.type === 'image' || item.type === 'gif'" :src="(item as ContentItem).data.src as string" class="fill" />
                 <video v-else-if="item.type === 'video'" :src="(item as ContentItem).data.src as string" class="fill" :autoplay="(item as ContentItem).data.autoplay as boolean" :loop="(item as ContentItem).data.loop as boolean" :muted="(item as ContentItem).data.muted as boolean" />
                 <div v-else-if="item.type === 'text'" class="text-content fill" :style="textStyle((item as ContentItem).data)">{{ (item as ContentItem).data.content }}</div>
                 <div v-else-if="item.type === 'color'" class="fill" :style="{ backgroundColor: (item as ContentItem).data.color as string }" />
@@ -651,6 +616,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
           :area="area"
           :selected="canvasStore.selectedAreaId === area.id"
           :draw-mode="drawMode"
+          :canvas-scale="totalScale"
           @select="canvasStore.selectArea(area.id)"
           @rename="(name) => canvasStore.updateArea(area.id, { name })"
           @remove="canvasStore.removeArea(area.id)"
@@ -684,7 +650,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                 @drop.prevent="onElementTypeDrop"
               >
                 <div v-if="!layoutItems.length" class="drop-empty-state" :class="{ active: isElementTypeDragOver }">
-                  <i class="icon-add" />
+                  <component :is="ICONS['plus']" :size="14" />
                   <span>Drag an element here</span>
                 </div>
               </div>
@@ -698,7 +664,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                   @mouseenter="uiStore.hoverLayoutItem(item.id)"
                   @mouseleave="uiStore.hoverLayoutItem(null)"
                 >
-                  <img v-if="item.type === 'image' && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
+                  <img v-if="(item.type === 'image' || item.type === 'gif') && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
                   <div v-else-if="item.type === 'video' && (item.data as ElementData).src" class="item-placeholder fill">▶ Video</div>
                   <div v-else-if="item.type === 'text'" class="text-content fill" :style="layoutTextStyle(item.data as ElementData)">{{ (item.data as ElementData).content }}</div>
                   <div v-else-if="item.type === 'color'" class="fill" :style="{ backgroundColor: (item.data as ElementData).fillColor }" />
@@ -730,7 +696,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                 class="element-ghost"
                 :style="{ left: dragGhostPos.x + '%', top: dragGhostPos.y + '%' }"
               >
-                <i :class="ELEMENT_TYPE_ICONS[uiStore.draggingElementType]" />
+                <component :is="ICONS[ELEMENT_TYPE_ICONS[uiStore.draggingElementType]]" :size="14" />
                 <span>{{ ELEMENT_TYPE_LABELS[uiStore.draggingElementType] }}</span>
               </div>
             </template>
@@ -750,7 +716,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                   @drop.prevent="onElementTypeDrop"
                 >
                   <div v-if="!layoutItems.length" class="drop-empty-state" :class="{ active: isElementTypeDragOver }">
-                    <i class="icon-add" />
+                    <component :is="ICONS['plus']" :size="14" />
                     <span>Drag an element here</span>
                   </div>
                 </div>
@@ -764,7 +730,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                     @mouseenter="uiStore.hoverLayoutItem(item.id)"
                     @mouseleave="uiStore.hoverLayoutItem(null)"
                   >
-                    <img v-if="item.type === 'image' && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
+                    <img v-if="(item.type === 'image' || item.type === 'gif') && (item.data as ElementData).src" :src="(item.data as ElementData).src" class="fill" draggable="false" />
                     <div v-else-if="item.type === 'text'" class="text-content fill" :style="layoutTextStyle(item.data as ElementData)">{{ (item.data as ElementData).content }}</div>
                     <div v-else-if="item.type === 'color'" class="fill" :style="{ backgroundColor: (item.data as ElementData).fillColor }" />
                     <div v-else class="item-placeholder fill">{{ ITEM_LABELS[item.type] ?? item.type }}</div>
@@ -798,13 +764,49 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
                   class="element-ghost"
                   :style="{ left: dragGhostPos.x + '%', top: dragGhostPos.y + '%' }"
                 >
-                  <i :class="ELEMENT_TYPE_ICONS[uiStore.draggingElementType]" />
+                  <component :is="ICONS[ELEMENT_TYPE_ICONS[uiStore.draggingElementType]]" :size="14" />
                   <span>{{ ELEMENT_TYPE_LABELS[uiStore.draggingElementType] }}</span>
                 </div>
               </div>
             </template>
           </div>
         </template>
+      </div>
+
+      <!-- Empty state guide — positioned over canvas-outer so it isn't scaled -->
+      <div v-if="!canvasStore.areas.length" class="canvas-empty-state">
+        <div class="empty-steps">
+          <div class="empty-step" :class="{ highlight: drawMode }">
+            <span class="step-number">1</span>
+            <div class="step-content">
+              <span class="step-title">Draw an area</span>
+              <span class="step-desc">Click the <strong>□</strong> tool above, then click &amp; drag on the canvas to create an overlay region</span>
+            </div>
+          </div>
+          <div class="empty-step">
+            <span class="step-number">2</span>
+            <div class="step-content">
+              <span class="step-title">Build a node graph</span>
+              <span class="step-desc">Drag nodes from the palette into the graph panel below to define triggers, transitions, and content</span>
+            </div>
+          </div>
+          <div class="empty-step">
+            <span class="step-number">3</span>
+            <div class="step-content">
+              <span class="step-title">Add elements</span>
+              <span class="step-desc">Select a container node, then add images, text, video, or colors to design your overlay</span>
+            </div>
+          </div>
+          <div class="empty-step">
+            <span class="step-number">4</span>
+            <div class="step-content">
+              <span class="step-title">Export</span>
+              <span class="step-desc">Export as a self-contained widget and paste it into Streamlabs as a Custom Widget source</span>
+            </div>
+          </div>
+        </div>
+        <div class="empty-or">or</div>
+        <button class="empty-open-btn" @click.stop="$emit('open-scene')">Open an existing .alchemy file</button>
       </div>
     </div>
   </div>
@@ -816,7 +818,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  background: #17242D;
+  background: var(--surface-2);
 }
 
 .toolbar {
@@ -824,8 +826,8 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  border-bottom: 0.5px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -833,38 +835,38 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   width: 28px;
   height: 28px;
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.1s;
+  transition: all 120ms ease;
 }
-.tool-btn:hover { border-color: #4F5E65; color: var(--text); }
-.tool-btn.active { border-color: #80F5D2; color: #80F5D2; background: rgba(128,245,210,0.08); }
+.tool-btn:hover { border-color: var(--text-faint); color: var(--text); }
+.tool-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
 .toolbar-sep { width: 1px; height: 18px; background: var(--border); margin: 0 4px; }
 .toolbar-spacer { flex: 1; }
-.toolbar-hint { font-size: 11px; color: var(--text-muted); }
+.toolbar-hint { font-size: 13px; color: var(--text-muted); }
 
 .event-select {
-  background: #17242D;
-  border: 1px solid #3a474f;
-  border-radius: 4px;
-  color: #BDC2C4;
-  font-size: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
   padding: 3px 6px;
   outline: none;
 }
 
 .fire-btn {
-  background: #FFBE72;
+  background: var(--cat-trigger);
   border: none;
-  border-radius: 4px;
-  color: #09161D;
-  font-size: 11px;
+  border-radius: var(--radius-sm);
+  color: var(--on-accent);
+  font-size: 13px;
   font-weight: 700;
   padding: 3px 10px;
   cursor: pointer;
@@ -873,35 +875,35 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 
 .reset-btn {
   background: transparent;
-  border: 1px solid #3a474f;
-  border-radius: 4px;
-  color: #91979A;
-  font-size: 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 13px;
   font-weight: 700;
   padding: 3px 10px;
   cursor: pointer;
 }
-.reset-btn:hover { background: #2B383F; color: #BDC2C4; }
+.reset-btn:hover { background: var(--surface-3); color: var(--text); }
 
 .zoom-label {
   background: transparent;
-  border: 1px solid #3a474f;
-  border-radius: 4px;
-  color: #91979A;
-  font-size: 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 13px;
   font-weight: 600;
   padding: 3px 8px;
   cursor: pointer;
   min-width: 38px;
   text-align: center;
 }
-.zoom-label:hover { background: #2B383F; color: #BDC2C4; }
+.zoom-label:hover { background: var(--surface-3); color: var(--text); }
 
 .canvas-outer {
   flex: 1;
   min-height: 0;
   position: relative;
-  background: #0f1c23;
+  background: var(--bg);
   overflow: hidden;
   cursor: default;
 }
@@ -915,7 +917,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   transform-origin: 0 0;
   overflow: hidden;
   user-select: none;
-  box-shadow: 0 0 0 1px #3a474f;
+  box-shadow: 0 0 0 1px var(--border-strong);
   background: #000;
 }
 .canvas.draw-mode { cursor: crosshair; }
@@ -923,7 +925,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 .canvas-grid {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, #2B383F 1px, transparent 1px);
+  background-image: radial-gradient(circle, var(--text-faint) 1px, transparent 1px);
   background-size: var(--grid, 24px) var(--grid, 24px);
   pointer-events: none;
 }
@@ -937,7 +939,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   justify-content: center;
   gap: 20px;
   pointer-events: none;
-  z-index: 100;
+  z-index: 10;
 }
 
 .empty-steps {
@@ -958,16 +960,16 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   transition: border-color 0.2s, background 0.2s;
 }
 .empty-step.highlight {
-  border-color: rgba(128, 245, 210, 0.3);
-  background: rgba(128, 245, 210, 0.06);
+  border-color: var(--accent-tint-md);
+  background: var(--accent-dim);
 }
 
 .step-number {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: rgba(128, 245, 210, 0.12);
-  color: #80F5D2;
+  background: var(--accent-dim);
+  color: var(--accent);
   font-size: 12px;
   font-weight: 700;
   display: flex;
@@ -986,39 +988,39 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 .step-title {
   font-size: 14px;
   font-weight: 600;
-  color: #BDC2C4;
+  color: var(--text);
 }
 
 .step-desc {
   font-size: 12px;
-  color: #5a6a72;
+  color: var(--text-faint);
   line-height: 1.4;
 }
 .step-desc strong {
-  color: #80F5D2;
+  color: var(--accent);
   font-weight: 600;
 }
 
 .empty-or {
-  color: #3a474f;
+  color: var(--text-faint);
   font-size: 12px;
 }
 
 .empty-open-btn {
   background: transparent;
-  border: 1px solid #3a474f;
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
-  color: #91979A;
+  color: var(--text-muted);
   font-size: 12px;
   padding: 6px 16px;
   cursor: pointer;
   pointer-events: all;
-  transition: all 0.15s;
+  transition: all 120ms ease;
 }
 .empty-open-btn:hover {
-  border-color: #80F5D2;
-  color: #80F5D2;
-  background: rgba(128, 245, 210, 0.06);
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
 }
 
 .scene-wrapper {
@@ -1040,8 +1042,8 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 
 .draft {
   position: absolute;
-  border: 2px dashed #80F5D2;
-  background: rgba(128,245,210,0.06);
+  border: 2px dashed var(--accent);
+  background: var(--accent-dim);
   pointer-events: none;
 }
 
@@ -1059,11 +1061,11 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   background: rgba(0,0,0,0.5);
   z-index: 0;
   pointer-events: all;
-  transition: background 0.1s;
+  transition: background 120ms ease;
 }
 .layout-overlay.drop-target {
-  background: rgba(128, 245, 210, 0.12);
-  outline: 2px dashed #80F5D2;
+  background: var(--accent-dim);
+  outline: 2px dashed var(--accent);
   outline-offset: -2px;
 }
 
@@ -1079,20 +1081,20 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   pointer-events: none;
   font-size: 11px;
   letter-spacing: 0.3px;
-  transition: color 0.15s;
+  transition: color 120ms ease;
 }
 .drop-empty-state i { font-size: 22px; }
 .drop-empty-state.active {
-  color: rgba(128, 245, 210, 0.7);
+  color: var(--accent);
 }
 
 .element-ghost {
   position: absolute;
   width: 50%;
   height: 50%;
-  border: 2px dashed #80F5D2;
-  background: rgba(128, 245, 210, 0.08);
-  border-radius: 4px;
+  border: 2px dashed var(--accent);
+  background: var(--accent-dim);
+  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1100,7 +1102,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   gap: 6px;
   pointer-events: none;
   z-index: 10;
-  color: #80F5D2;
+  color: var(--accent);
   font-size: 11px;
 }
 .element-ghost i { font-size: 20px; }
@@ -1133,14 +1135,14 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 
 .border-edge {
   position: absolute;
-  background: rgba(197,123,255,0.3);
+  background: rgba(182, 138, 229, 0.3);
   pointer-events: all;
   cursor: move;
-  transition: background 0.1s;
+  transition: background 120ms ease;
 }
 .item-frame:hover .border-edge,
-.item-frame.active .border-edge { background: #C57BFF; }
-.item-frame.hovered .border-edge { background: rgba(197, 123, 255, 0.5); }
+.item-frame.active .border-edge { background: var(--cat-lifecycle); }
+.item-frame.hovered .border-edge { background: rgba(182, 138, 229, 0.5); }
 
 .border-top    { top: 0;    left: 0;  right: 0;   height: 2px; }
 .border-right  { top: 0;    right: 0; bottom: 0;  width: 2px; }
@@ -1150,8 +1152,8 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 .item-label {
   position: absolute;
   top: 2px; left: 2px;
-  background: rgba(197,123,255,0.7);
-  color: #09161D;
+  background: rgba(182, 138, 229, 0.7);
+  color: var(--on-accent);
   font-size: 9px; font-weight: 700;
   padding: 2px 5px;
   letter-spacing: 0.4px;
@@ -1162,13 +1164,13 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   white-space: nowrap;
   user-select: none;
 }
-.item-frame.active .item-label { background: #C57BFF; }
+.item-frame.active .item-label { background: var(--cat-lifecycle); }
 
 .z-select {
-  background: #17242D;
-  border: 1px solid #4F5E65;
+  background: var(--surface-2);
+  border: 1px solid var(--text-faint);
   border-radius: 3px;
-  color: #BDC2C4;
+  color: var(--text);
   font-size: 9px;
   padding: 1px 2px;
   cursor: pointer;
@@ -1178,7 +1180,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #4F5E65;
+  color: var(--text-faint);
   font-size: 11px;
 }
 
@@ -1204,8 +1206,8 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 .resize-handle {
   position: absolute;
   width: 8px; height: 8px;
-  background: #BDC2C4;
-  border: 1.5px solid #C57BFF;
+  background: var(--text);
+  border: 1.5px solid var(--cat-lifecycle);
   border-radius: 2px;
   pointer-events: all;
 }
@@ -1221,7 +1223,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 
 .container-frame {
   position: absolute;
-  outline: 1px dashed #72D5FF;
+  outline: 1px dashed var(--cat-transition);
   overflow: hidden;
 }
 </style>

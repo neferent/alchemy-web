@@ -165,7 +165,7 @@ onUnmounted(() => {
 <template>
   <div class="app">
     <header class="app-header">
-      <div class="logo">Alchemy</div>
+      <div class="logo"><img src="/alchemy-logo.png" alt="Alchemy" class="logo-img" />Alchemy</div>
       <div class="header-center">
         <span v-if="selectedArea" class="area-pill" :style="{ borderColor: selectedArea.color }">
           {{ selectedArea.name }}
@@ -225,15 +225,27 @@ onUnmounted(() => {
   justify-content: space-between;
   height: 48px;
   padding: 0 16px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  border-bottom: 0.5px solid var(--border);
   flex-shrink: 0;
 }
 
 .logo {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-brand);
+}
+
+.logo-img {
+  height: 24px;
+  width: 24px;
+  position: relative;
+  top: -1px;
 }
 
 .header-center {
@@ -246,7 +258,7 @@ onUnmounted(() => {
   font-size: 14px;
   color: var(--text);
   border: 1px solid;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 2px 8px;
   font-weight: 500;
 }
@@ -265,27 +277,29 @@ onUnmounted(() => {
 .btn-scene {
   font-size: 14px;
   padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid #ffffff22;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border-strong);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
-.btn-scene:hover:not(:disabled) { background: #ffffff0d; color: var(--text); }
+.btn-scene:hover:not(:disabled) { background: var(--surface-4); color: var(--text); }
 .btn-scene:disabled { opacity: 0.35; cursor: default; }
 
-.header-divider { width: 1px; height: 20px; background: var(--border); }
+.header-divider { width: 1px; height: 20px; background: var(--border-strong); }
 
 .btn-export {
   font-size: 14px;
   padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(128,245,210,0.3);
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--accent-dim);
   background: transparent;
-  color: #80F5D2;
+  color: var(--accent);
   cursor: pointer;
+  transition: background 120ms ease;
 }
-.btn-export:hover:not(:disabled) { background: rgba(128,245,210,0.08); }
+.btn-export:hover:not(:disabled) { background: var(--accent-dim); }
 .btn-export:disabled { opacity: 0.35; cursor: default; }
 
 .app-main {
@@ -299,11 +313,11 @@ onUnmounted(() => {
 /* ── Left sidebar ── */
 
 .left-col {
-  width: 180px;
+  width: 220px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border);
+  border-right: 0.5px solid var(--border);
   overflow: hidden;
 }
 
@@ -315,9 +329,9 @@ onUnmounted(() => {
 
 .left-sep {
   height: 4px;
-  background: var(--border);
+  background: var(--border-strong);
   flex-shrink: 0;
-  box-shadow: 0 4px 16px #00000060;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .palette-pane {
@@ -344,13 +358,13 @@ onUnmounted(() => {
 
 .panel-divider {
   height: 4px;
-  background: var(--border);
+  background: var(--border-strong);
   flex-shrink: 0;
   cursor: row-resize;
-  transition: background 0.15s;
+  transition: background 120ms ease;
   position: relative;
   z-index: 10;
-  box-shadow: 0 4px 16px #00000060;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .panel-divider::after {
@@ -361,7 +375,7 @@ onUnmounted(() => {
 
 .panel-divider:hover,
 .panel-divider.dragging {
-  background: rgba(128,245,210,0.3);
+  background: var(--accent-tint-md);
 }
 
 .collapse-btn {
@@ -369,16 +383,16 @@ onUnmounted(() => {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--surface-3);
+  border: 0.5px solid var(--border-strong);
   border-radius: 10px;
   color: var(--text-muted);
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1;
   padding: 2px 8px;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 120ms ease;
   z-index: 10;
 }
 .panel-divider:hover .collapse-btn,

@@ -282,8 +282,8 @@ onUnmounted(() => {
 .timeline-strip {
   display: flex;
   align-items: stretch;
-  border-top: 1px solid #3a474f;
-  background: #0f1c23;
+  border-top: 0.5px solid var(--border-strong);
+  background: var(--surface-2);
   flex-shrink: 0;
 }
 
@@ -296,23 +296,23 @@ onUnmounted(() => {
   justify-content: center;
   gap: 6px;
   padding: 8px;
-  border-right: 1px solid #3a474f;
+  border-right: 0.5px solid var(--border-strong);
 }
 
 .label-text {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #4F5E65;
+  color: var(--text-faint);
 }
 
 .play-wrap {
   display: flex;
   padding: 4px;
-  background: #17242D;
-  border: 1px solid #3a474f;
-  border-radius: 6px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
 }
 
 .play-btn {
@@ -322,18 +322,18 @@ onUnmounted(() => {
   width: 26px;
   height: 26px;
   flex-shrink: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: none;
   background: transparent;
-  color: #91979A;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0;
-  transition: background 0.1s, color 0.1s;
+  transition: background 120ms ease, color 120ms ease;
 }
 
 .play-btn:hover {
-  background: #2B383F;
-  color: #BDC2C4;
+  background: var(--surface-4);
+  color: var(--text);
 }
 
 .timeline-body {
@@ -349,8 +349,8 @@ onUnmounted(() => {
   flex: 1;
   display: flex;
   align-items: center;
-  font-size: 11px;
-  color: #4F5E65;
+  font-size: 13px;
+  color: var(--text-faint);
 }
 
 .ruler {
@@ -374,20 +374,20 @@ onUnmounted(() => {
   display: block;
   width: 1px;
   height: 4px;
-  background: #3a474f;
+  background: var(--border-strong);
   margin-bottom: 2px;
 }
 
 .tick-label {
-  font-size: 9px;
-  color: #4F5E65;
+  font-size: 11px;
+  color: var(--text-faint);
   white-space: nowrap;
 }
 
 .lane {
   position: relative;
   flex-shrink: 0;
-  transition: height 0.15s ease;
+  transition: height 120ms ease;
 }
 
 .block {
@@ -404,7 +404,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   padding: 0;
-  transition: height 0.15s ease, top 0.15s ease, transform 0.15s ease, padding 0.15s ease;
+  transition: height 120ms ease, top 120ms ease, transform 120ms ease, padding 120ms ease;
 }
 
 .block.expanded {
@@ -418,8 +418,8 @@ onUnmounted(() => {
 }
 
 .block-label {
-  font-size: 10px;
-  color: #BDC2C4;
+  font-size: 12px;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -443,7 +443,7 @@ onUnmounted(() => {
   height: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 6px solid #80F5D2;
+  border-top: 6px solid var(--accent);
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -451,7 +451,7 @@ onUnmounted(() => {
 .playhead-line {
   width: 1px;
   flex: 1;
-  background: #80F5D2;
+  background: var(--accent);
   opacity: 0.4;
 }
 </style>

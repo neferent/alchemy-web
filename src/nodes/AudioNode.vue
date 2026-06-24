@@ -14,7 +14,7 @@ const src = computed({
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-audio" title="Audio" category="lifecycle">
+  <BaseNode icon="volume-2" title="Audio" category="lifecycle">
     <div class="node-field">
       <span class="node-label">Source URL / Path</span>
       <input v-model="src" type="text" placeholder="https://... or /path/to/audio" class="node-input" />
@@ -30,6 +30,6 @@ const src = computed({
 <style scoped>
 .node-slider {
   width: 100%;
-  accent-color: #22c55e;
+  accent-color: var(--accent);
 }
 </style>

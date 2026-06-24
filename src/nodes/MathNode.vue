@@ -7,7 +7,7 @@ const props = defineProps<{ data: { a: string; operator: string; b: string } }>(
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-stats" title="Math" category="logic">
+  <BaseNode icon="bar-chart" title="Math" category="logic">
     <div class="row">
       <div class="node-field" style="flex: 1">
         <span class="node-label">A</span>

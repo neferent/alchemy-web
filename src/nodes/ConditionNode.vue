@@ -7,7 +7,7 @@ const props = defineProps<{ data: { operator: string; value: number } }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-settings-3" title="Condition" category="logic">
+  <BaseNode icon="sliders-horizontal" title="Condition" category="logic">
     <div class="row">
       <div class="node-field" style="flex: 1">
         <span class="node-label">Operator</span>
@@ -45,14 +45,14 @@ const props = defineProps<{ data: { operator: string; value: number } }>()
   align-items: flex-end;
   gap: 4px;
   padding-top: 6px;
-  border-top: 1px solid #2a2a2a;
+  border-top: 1px solid var(--border-strong);
   margin-top: 4px;
   margin-bottom: 4px;
 }
 .out-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
 }
-.out-label.true  { color: #22c55e; transform: translateY(-1px); }
-.out-label.false { color: #f43f5e; transform: translateY(1px); }
+.out-label.true  { color: var(--success); transform: translateY(-1px); }
+.out-label.false { color: var(--danger); transform: translateY(1px); }
 </style>

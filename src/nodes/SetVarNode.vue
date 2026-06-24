@@ -7,7 +7,7 @@ const props = defineProps<{ data: { variable: string; value: string } }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-edit" title="Set Variable" category="logic">
+  <BaseNode icon="pencil" title="Set Variable" category="logic">
     <div class="node-field">
       <span class="node-label">Variable Name</span>
       <input v-model="props.data.variable" type="text" placeholder="topTip" class="node-input" />

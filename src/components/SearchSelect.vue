@@ -128,9 +128,9 @@ async function scrollActive() {
   right: 0;
   max-height: 160px;
   overflow-y: auto;
-  background: #1e1e1e;
-  border: 1px solid #3a3a3a;
-  border-radius: 3px;
+  background: var(--surface-3);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   z-index: 9999;
   list-style: none;
   margin: 0;
@@ -139,12 +139,12 @@ async function scrollActive() {
 .ss-item {
   padding: 5px 8px;
   font-size: 11px;
-  color: #ccc;
+  color: var(--text-muted);
   cursor: pointer;
 }
 .ss-item:hover,
 .ss-item--active {
-  background: #2a2a2a;
-  color: #fff;
+  background: var(--surface-4);
+  color: var(--text);
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NODE_TYPES, NODE_CATEGORY_COLORS, type NodeCategory } from '@/types'
+import { ICONS } from '@/utils/icons'
 
 const categories: { key: NodeCategory; label: string }[] = [
   { key: 'trigger',    label: 'Triggers' },
@@ -48,7 +49,7 @@ function onDragStart(e: DragEvent, type: string) {
           :style="{ '--cat-color': NODE_CATEGORY_COLORS[cat.key] }"
           @dragstart="(e) => onDragStart(e, node.type)"
         >
-          <span class="palette-icon"><i :class="node.icon" /></span>
+          <span class="palette-icon"><component :is="ICONS[node.icon]" :size="15" /></span>
           <span class="palette-label">{{ node.label }}</span>
         </div>
 
@@ -66,7 +67,7 @@ function onDragStart(e: DragEvent, type: string) {
               :style="{ '--cat-color': NODE_CATEGORY_COLORS['logic'] }"
               @dragstart="(e) => onDragStart(e, node.type)"
             >
-              <span class="palette-icon"><i :class="node.icon" /></span>
+              <span class="palette-icon"><component :is="ICONS[node.icon]" :size="15" /></span>
               <span class="palette-label">{{ node.label }}</span>
             </div>
           </template>
@@ -79,8 +80,7 @@ function onDragStart(e: DragEvent, type: string) {
 <style scoped>
 .palette {
   width: 100%;
-  background: #0f1c23;
-  border-right: 1px solid var(--border);
+  background: var(--surface-2);
   overflow-y: auto;
   padding: 8px 0;
 }
@@ -93,7 +93,7 @@ function onDragStart(e: DragEvent, type: string) {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -107,8 +107,8 @@ function onDragStart(e: DragEvent, type: string) {
 }
 
 .palette-chevron {
-  font-size: 10px;
-  transition: transform 0.15s;
+  font-size: 12px;
+  transition: transform 120ms ease;
   display: inline-block;
 }
 
@@ -123,13 +123,13 @@ function onDragStart(e: DragEvent, type: string) {
   padding: 5px 10px;
   cursor: grab;
   border-left: 2px solid transparent;
-  transition: all 0.1s;
-  font-size: 12px;
+  transition: all 120ms ease;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
 .palette-item:hover {
-  background: #17242D;
+  background: var(--surface-3);
   border-left-color: var(--cat-color);
   color: var(--text);
 }
@@ -142,13 +142,13 @@ function onDragStart(e: DragEvent, type: string) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
+  width: 20px;
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .palette-label {
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -156,11 +156,11 @@ function onDragStart(e: DragEvent, type: string) {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: #4F5E65;
+  color: var(--text-faint);
   padding: 5px 10px 3px 10px;
   cursor: pointer;
   user-select: none;
@@ -168,6 +168,6 @@ function onDragStart(e: DragEvent, type: string) {
 }
 
 .palette-advanced-toggle:hover {
-  color: #91979A;
+  color: var(--text-muted);
 }
 </style>

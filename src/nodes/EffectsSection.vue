@@ -112,7 +112,7 @@ const open = ref(false)
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid #3a474f;
+  border-top: 1px solid var(--border-strong);
   padding-top: 6px;
   margin-top: 2px;
 }
@@ -123,8 +123,8 @@ const open = ref(false)
   gap: 4px;
   background: none;
   border: none;
-  color: #91979A;
-  font-size: 9px;
+  color: var(--text-muted);
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -134,12 +134,12 @@ const open = ref(false)
 }
 
 .fx-toggle:hover {
-  color: #BDC2C4;
+  color: var(--text);
 }
 
 .fx-chevron {
-  font-size: 10px;
-  transition: transform 0.15s;
+  font-size: 12px;
+  transition: transform 120ms ease;
   display: inline-block;
   transform: rotate(-90deg);
 }
@@ -152,20 +152,20 @@ const open = ref(false)
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
-  color: #aaa;
+  font-size: 13px;
+  color: var(--text-muted);
   cursor: pointer;
   user-select: none;
 }
 
 .fx-check input[type='checkbox'] {
-  accent-color: #80F5D2;
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
 .node-slider {
   width: 100%;
-  accent-color: #80F5D2;
+  accent-color: var(--accent);
 }
 
 .row {
@@ -182,9 +182,9 @@ const open = ref(false)
   width: 100%;
   height: 24px;
   padding: 1px 2px;
-  background: #111;
-  border: 1px solid #333;
-  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 </style>

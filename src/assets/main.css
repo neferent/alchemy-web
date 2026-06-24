@@ -1,6 +1,5 @@
-@import '@fontsource/roboto/400.css';
-@import '@fontsource/roboto/500.css';
-@import './icomoon.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
 *,
 *::before,
@@ -11,13 +10,56 @@
 }
 
 :root {
-  --bg: #17242D;
-  --surface: #2B383F;
-  --surface-2: #334850;
-  --border: #3a474f;
-  --text: #BDC2C4;
-  --text-muted: #91979A;
-  --accent: #80F5D2;
+  /* ── Surfaces ── */
+  --bg:        #111316;
+  --surface-2: #16191d;
+  --surface-3: #1e2228;
+  --surface-4: #2c3238;
+
+  /* ── Borders ── */
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-subtle:  rgba(255, 255, 255, 0.08);
+  --border-strong:  rgba(255, 255, 255, 0.12);
+  --border-hover:   rgba(255, 255, 255, 0.18);
+
+  /* ── Text ── */
+  --text:       #e2e6ea;
+  --text-muted: #838d96;
+  --text-faint: #4a5560;
+  --text-brand: #5b8a9e;
+
+  /* ── Accent ── */
+  --accent:         #8e9ead;
+  --accent-hover:   #4a5e6e;
+  --accent-dim:     rgba(142, 158, 173, 0.12);
+  --accent-tint-md: rgba(142, 158, 173, 0.15);
+  --on-accent:      #111316;
+
+  /* ── Status ── */
+  --danger:       #f09595;
+  --success:      #5dcaa5;
+  --warning:      #ef9f27;
+  --info:         #38bdf8;
+  --danger-tint:  rgba(240, 149, 149, 0.12);
+  --success-tint: rgba(93, 202, 165, 0.12);
+  --warning-tint: rgba(239, 159, 39, 0.12);
+
+  /* ── Node categories ── */
+  --cat-trigger:    #E8A862;
+  --cat-lifecycle:  #B68AE5;
+  --cat-transition: #5DB8D9;
+  --cat-logic:      #7C8896;
+
+  /* ── Radius ── */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  8px;
+  --radius-xl:  12px;
+  --radius-2xl: 16px;
+
+  /* ── Fonts ── */
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 }
 
 html,
@@ -26,26 +68,29 @@ body {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
+  line-height: 1.5;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
   height: 100%;
 }
 
-/* VueFlow overrides */
+/* ── VueFlow overrides ── */
+
 .vue-flow__renderer {
   z-index: 0;
 }
 
 .vue-flow__controls {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: 0 2px 8px #0006;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .vue-flow__controls-button {
@@ -55,7 +100,7 @@ body {
 }
 
 .vue-flow__controls-button:hover {
-  background: var(--surface-2);
+  background: var(--surface-4);
   color: var(--text);
 }
 
@@ -64,12 +109,12 @@ body {
 }
 
 .vue-flow__edge-path {
-  stroke: #4F5E65;
+  stroke: var(--text-faint);
   stroke-width: 2;
 }
 
 .vue-flow__edge.selected .vue-flow__edge-path {
-  stroke: #BDC2C4;
+  stroke: var(--text);
 }
 
 .vue-flow__edge:hover .vue-flow__edge-path {
@@ -77,21 +122,21 @@ body {
 }
 
 .vue-flow__edge.edge-content .vue-flow__edge-path {
-  stroke: rgba(128, 245, 210, 0.4);
+  stroke: rgba(93, 184, 217, 0.4);
 }
 
 .vue-flow__edge.edge-content.selected .vue-flow__edge-path,
 .vue-flow__edge.edge-content:hover .vue-flow__edge-path {
-  stroke: #80F5D2;
+  stroke: var(--cat-transition);
 }
 
 .vue-flow__edge.edge-modifier .vue-flow__edge-path {
-  stroke: rgba(255, 111, 91, 0.4);
+  stroke: rgba(240, 149, 149, 0.4);
 }
 
 .vue-flow__edge.edge-modifier.selected .vue-flow__edge-path,
 .vue-flow__edge.edge-modifier:hover .vue-flow__edge-path {
-  stroke: #FF6F5B;
+  stroke: var(--danger);
 }
 
 .vue-flow__connection-path {
@@ -100,54 +145,54 @@ body {
 }
 
 .vue-flow__connection-path.invalid {
-  stroke: #FF6F5B;
+  stroke: var(--danger);
 }
 
 .vue-flow__handle {
   width: 8px !important;
   height: 8px !important;
   border-radius: 50% !important;
-  border: 2px solid #4F5E65 !important;
-  background: #17242D !important;
-  transition: border-color 0.1s, box-shadow 0.1s;
+  border: 2px solid var(--text-faint) !important;
+  background: var(--bg) !important;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
   z-index: 10 !important;
 }
 
 .vue-flow__handle:hover,
 .vue-flow__handle.connectable:hover {
   border-color: var(--accent) !important;
-  box-shadow: 0 0 0 3px rgba(128, 245, 210, 0.25);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
-
-/* Content input handle on Container — teal to match content category */
+/* Content input handle — teal to match transition/content category */
 .content-handle {
-  border-color: #80F5D2 !important;
+  border-color: var(--cat-transition) !important;
 }
 
 .content-handle:hover,
 .content-handle.connectable:hover {
-  border-color: #80F5D2 !important;
-  box-shadow: 0 0 0 3px rgba(128, 245, 210, 0.25) !important;
+  border-color: var(--cat-transition) !important;
+  box-shadow: 0 0 0 3px rgba(93, 184, 217, 0.25) !important;
 }
 
-/* Modifier handles are square + red so they're visually distinct from round flow handles */
+/* Modifier handles are square + danger-colored */
 .modifier-handle {
   border-radius: 2px !important;
-  border-color: #FF6F5B !important;
+  border-color: var(--danger) !important;
 }
 
 .modifier-handle:hover,
 .modifier-handle.connectable:hover {
-  border-color: #FF6F5B !important;
-  box-shadow: 0 0 0 3px rgba(255, 111, 91, 0.25) !important;
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-tint) !important;
 }
 
 .vue-flow__node.selected .base-node {
-  border-color: rgba(128, 245, 210, 0.35) !important;
+  border-color: rgba(142, 158, 173, 0.35) !important;
 }
 
-/* Scrollbar */
+/* ── Scrollbar ── */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -156,15 +201,16 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
+  background: rgba(142, 158, 173, 0.2);
+  border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: rgba(142, 158, 173, 0.32);
 }
 
-/* Type scale */
-.text-title    { font-size: 20px; font-weight: 500; }
-.text-subtitle { font-size: 16px; font-weight: 500; }
+/* ── Type scale ── */
+
+.text-title    { font-size: 22px; font-weight: 500; }
+.text-subtitle { font-size: 17px; font-weight: 500; }
 .text-body     { font-size: 14px; font-weight: 400; }
-.text-small    { font-size: 12px; font-weight: 400; }
+.text-small    { font-size: 13px; font-weight: 400; }

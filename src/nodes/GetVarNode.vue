@@ -6,7 +6,7 @@ const props = defineProps<{ data: { variable: string } }>()
 </script>
 
 <template>
-  <BaseNode icon="icon-information" title="Get Variable" category="logic">
+  <BaseNode icon="info" title="Get Variable" category="logic">
     <div class="node-field">
       <span class="node-label">Variable Name</span>
       <input v-model="props.data.variable" type="text" placeholder="myVar" class="node-input" />

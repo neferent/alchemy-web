@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from 'vue'
 import { NODE_TYPES, NODE_CATEGORY_COLORS } from '@/types'
+import { ICONS } from '@/utils/icons'
 
 const props = defineProps<{
   visible: boolean
@@ -61,7 +62,7 @@ function onKey(e: KeyboardEvent) {
       :style="{ left: x + 'px', top: y + 'px' }"
     >
       <div class="ctx-search-wrap">
-        <i class="icon-search ctx-search-icon" />
+        <component :is="ICONS['search']" :size="14" class="ctx-search-icon" />
         <input
           ref="searchInput"
           v-model="search"
@@ -80,7 +81,7 @@ function onKey(e: KeyboardEvent) {
           @mousedown.prevent="select(node.type)"
           @mousemove="activeIndex = i"
         >
-          <i :class="node.icon" class="ctx-item-icon" />
+          <component :is="ICONS[node.icon]" :size="14" class="ctx-item-icon" />
           <span class="ctx-item-label">{{ node.label }}</span>
           <span class="ctx-item-cat">{{ node.category }}</span>
         </div>
@@ -101,10 +102,10 @@ function onKey(e: KeyboardEvent) {
   position: fixed;
   z-index: 1000;
   width: 220px;
-  background: #1e2d35;
-  border: 1px solid #3a474f;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px #00000070;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.44);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -115,12 +116,11 @@ function onKey(e: KeyboardEvent) {
   align-items: center;
   gap: 6px;
   padding: 8px 10px 6px;
-  border-bottom: 1px solid #3a474f;
+  border-bottom: 0.5px solid var(--border-strong);
 }
 
 .ctx-search-icon {
-  color: #4F5E65;
-  font-size: 13px;
+  color: var(--text-faint);
   flex-shrink: 0;
 }
 
@@ -130,12 +130,12 @@ function onKey(e: KeyboardEvent) {
   border: none;
   outline: none;
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
   font-family: inherit;
 }
 
 .ctx-search::placeholder {
-  color: #4F5E65;
+  color: var(--text-faint);
 }
 
 .ctx-list {
@@ -154,35 +154,33 @@ function onKey(e: KeyboardEvent) {
 }
 
 .ctx-item.active {
-  background: #2B383F;
+  background: var(--surface-4);
   border-left-color: var(--cat-color);
 }
 
 .ctx-item-icon {
-  font-size: 13px;
   color: var(--cat-color);
   width: 16px;
   flex-shrink: 0;
-  text-align: center;
 }
 
 .ctx-item-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text);
   flex: 1;
 }
 
 .ctx-item-cat {
-  font-size: 9px;
-  color: #4F5E65;
+  font-size: 11px;
+  color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .ctx-empty {
   padding: 12px 10px;
-  font-size: 11px;
-  color: #4F5E65;
+  font-size: 13px;
+  color: var(--text-faint);
   text-align: center;
 }
 </style>

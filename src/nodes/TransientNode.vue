@@ -11,7 +11,7 @@ const count = computed(() => elementsStore.getElements(props.id).length)
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-record" title="Transient Container" category="lifecycle">
+  <BaseNode icon="box-select" title="Transient Container" category="lifecycle">
     <div class="node-field">
       <span class="node-label">Duration (s)</span>
       <input v-model.number="props.data.duration" type="number" min="0.1" step="0.5" class="node-input" />
@@ -23,8 +23,8 @@ const count = computed(() => elementsStore.getElements(props.id).length)
 
 <style scoped>
 .node-hint {
-  font-size: 10px;
-  color: #4F5E65;
+  font-size: 12px;
+  color: var(--text-faint);
   margin-top: 2px;
 }
 </style>

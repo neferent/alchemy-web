@@ -107,9 +107,9 @@ async function copy(tab: 'html' | 'css' | 'js') {
 }
 
 .modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: var(--surface-3);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius-lg);
   width: min(860px, 94vw);
   max-height: 84vh;
   display: flex;
@@ -139,7 +139,7 @@ async function copy(tab: 'html' | 'css' | 'js') {
   cursor: pointer;
   font-size: 14px;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 .close-btn:hover {
   color: var(--text);
@@ -148,10 +148,10 @@ async function copy(tab: 'html' | 'css' | 'js') {
 
 .modal-error {
   font-size: 12px;
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.2);
-  border-radius: 4px;
+  color: var(--danger);
+  background: var(--danger-tint);
+  border: 1px solid var(--danger-tint);
+  border-radius: var(--radius-sm);
   padding: 8px 12px;
   margin: 10px 16px 0;
   flex-shrink: 0;
@@ -180,20 +180,20 @@ async function copy(tab: 'html' | 'css' | 'js') {
   padding: 4px 14px;
   font-size: 12px;
   font-weight: 500;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.1s;
+  transition: all 120ms ease;
 }
 .tab-btn:hover {
   color: var(--text);
 }
 .tab-btn.active {
-  background: var(--accent, #6366f1);
-  border-color: var(--accent, #6366f1);
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 .copy-btn {
@@ -201,19 +201,19 @@ async function copy(tab: 'html' | 'css' | 'js') {
   padding: 4px 14px;
   font-size: 12px;
   font-weight: 500;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 120ms ease;
 }
 .copy-btn:hover {
   background: var(--border);
 }
 .copy-btn.done {
-  border-color: #22c55e;
-  color: #22c55e;
+  border-color: var(--success);
+  color: var(--success);
 }
 
 .code-block {
@@ -222,12 +222,12 @@ async function copy(tab: 'html' | 'css' | 'js') {
   overflow: auto;
   margin: 10px 16px 16px;
   padding: 12px;
-  background: #0e0e0e;
-  border-radius: 6px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   font-size: 11.5px;
   line-height: 1.55;
-  color: #d4d4d4;
+  color: var(--text);
   white-space: pre;
   tab-size: 2;
 }

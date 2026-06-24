@@ -7,7 +7,7 @@ const props = defineProps<{ data: { duration: number } }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-transition" title="Fade Out" category="transition">
+  <BaseNode icon="blend" title="Fade Out" category="transition">
     <div class="node-field">
       <span class="node-label">Duration (s)</span>
       <input v-model.number="props.data.duration" type="number" min="0.05" step="0.1" class="node-input" />

@@ -14,7 +14,7 @@ const isEditing = computed(() => uiStore.selectedNodeId === props.id)
 
 <template>
   <Handle id="out" type="source" :position="Position.Left" />
-  <BaseNode icon="icon-group" title="Container" category="lifecycle">
+  <BaseNode icon="layers" title="Container" category="lifecycle">
     <button
       class="edit-btn"
       :class="{ active: isEditing }"
@@ -31,11 +31,11 @@ const isEditing = computed(() => uiStore.selectedNodeId === props.id)
 <style scoped>
 .edit-btn {
   width: 100%;
-  background: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 4px;
-  color: #888;
-  font-size: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 12px;
   padding: 4px 6px;
   cursor: pointer;
   text-align: center;
@@ -43,22 +43,22 @@ const isEditing = computed(() => uiStore.selectedNodeId === props.id)
   align-items: center;
   justify-content: center;
   gap: 5px;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
 }
 .edit-btn:hover {
-  border-color: #8b5cf6;
-  color: #a78bfa;
+  border-color: var(--cat-lifecycle);
+  color: var(--cat-lifecycle);
 }
 .edit-btn.active {
-  border-color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.12);
-  color: #a78bfa;
+  border-color: var(--cat-lifecycle);
+  background: rgba(182, 138, 229, 0.12);
+  color: var(--cat-lifecycle);
 }
 .active-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: var(--cat-lifecycle);
   flex-shrink: 0;
   animation: pulse 1.8s ease-in-out infinite;
 }
@@ -67,8 +67,8 @@ const isEditing = computed(() => uiStore.selectedNodeId === props.id)
   50% { opacity: 0.35; }
 }
 .hint {
-  font-size: 9px;
-  color: #4F5E65;
+  font-size: 11px;
+  color: var(--text-faint);
   text-align: center;
   margin: 0;
 }

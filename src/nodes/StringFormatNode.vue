@@ -7,7 +7,7 @@ const props = defineProps<{ data: { template: string } }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-widgets" title="String Format" category="logic">
+  <BaseNode icon="layout-grid" title="String Format" category="logic">
     <div class="node-field">
       <span class="node-label">Template</span>
       <input v-model="props.data.template" type="text" placeholder="Top tip: {$maxTip}" class="node-input" />
@@ -19,8 +19,8 @@ const props = defineProps<{ data: { template: string } }>()
 
 <style scoped>
 .hint {
-  font-size: 9px;
-  color: #6b7280;
+  font-size: 11px;
+  color: var(--text-faint);
   padding-top: 2px;
 }
 </style>

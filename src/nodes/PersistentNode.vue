@@ -11,7 +11,7 @@ const count = computed(() => elementsStore.getElements(props.id).length)
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-lock-2" title="Persistent Container" category="lifecycle">
+  <BaseNode icon="lock" title="Persistent Container" category="lifecycle">
     <div class="node-hint">{{ count }} element{{ count !== 1 ? 's' : '' }} — edit in panel</div>
   </BaseNode>
   <Handle id="out" type="source" :position="Position.Right" />
@@ -19,7 +19,7 @@ const count = computed(() => elementsStore.getElements(props.id).length)
 
 <style scoped>
 .node-hint {
-  font-size: 10px;
-  color: #4F5E65;
+  font-size: 12px;
+  color: var(--text-faint);
 }
 </style>

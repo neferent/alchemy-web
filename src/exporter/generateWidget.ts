@@ -319,7 +319,7 @@ export function generateJS(
     div.dataset.elementId = el.id;
     div.style.cssText = 'left:' + layout.x + '%;top:' + layout.y + '%;width:' + layout.w + '%;height:' + layout.h + '%;z-index:' + (layout.z || 0) + ';';
 
-    if (el.type === 'image') {
+    if (el.type === 'image' || el.type === 'gif') {
       var img = document.createElement('img');
       img.src = el.src || '';
       img.alt = '';
@@ -457,7 +457,10 @@ export function generateJS(
   function renderArea(cmd, eventData) {
     playAudio(cmd);
     var areaEl = document.getElementById('area-' + cmd.areaId);
-    if (!areaEl || !cmd.lifecycleNode) return;
+    if (!areaEl || !cmd.lifecycleNode) {
+      console.log('[Alchemy] renderArea skip — areaEl:', !!areaEl, 'lifecycleNode:', !!cmd.lifecycleNode);
+      return;
+    }
 
     if (activeTimers[cmd.areaId]) { clearTimeout(activeTimers[cmd.areaId]); delete activeTimers[cmd.areaId]; }
 
@@ -466,6 +469,7 @@ export function generateJS(
     wrapper.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
 
     var elements = ELEMENTS[cmd.lifecycleNode.id] || [];
+    console.log('[Alchemy] renderArea:', cmd.areaId, 'lifecycleNode:', cmd.lifecycleNode.id, 'elements:', elements.length);
     elements.forEach(function (el) { wrapper.appendChild(buildElementEl(el, cmd.areaId, eventData, cmd.vars)); });
 
     contentEdges(GRAPHS[cmd.areaId].edges, cmd.lifecycleNode.id).forEach(function(e) {
@@ -487,24 +491,39 @@ export function generateJS(
     }
   }
 
-  document.addEventListener('onEventReceived', function (obj) {
-    var detail = obj.detail;
-    console.log('[Alchemy] onEventReceived:', JSON.stringify(detail));
-    AREAS.forEach(function (area) {
-      var triggerId = findEventTrigger(area.id, detail.type);
-      if (!triggerId) return;
-      var cmd = executeGraph(area.id, triggerId, detail);
-      if (!cmd) return;
-      if (cmd.delayMs > 0) {
-        setTimeout(function() { renderArea(cmd, detail); }, cmd.delayMs);
-      } else {
-        renderArea(cmd, detail);
-      }
-    });
-  });
+  function normalizeEvent(detail) {
+    if (!detail) return null;
+    var eventType = detail.type || detail.listener;
+    if (!eventType) return null;
+    var eventData = detail.event || detail;
+    var norm = {};
+    for (var k in eventData) { if (eventData.hasOwnProperty(k)) norm[k] = eventData[k]; }
+    if (eventType === 'donation') {
+      if (norm.from && !norm.tipper) norm.tipper = norm.from;
+      if (norm.name && !norm.tipper) norm.tipper = norm.name;
+      if (norm.from && !norm.username) norm.username = norm.from;
+    } else {
+      if (norm.name && !norm.username) norm.username = norm.name;
+    }
+    var TYPE_MAP = {
+      'donation-latest': 'donation', 'follower-latest': 'follow',
+      'subscriber-latest': 'subscription', 'cheer-latest': 'bits',
+      'superchat-latest': 'superchat', 'raid-latest': 'raid', 'merch-latest': 'merch'
+    };
+    return { eventType: TYPE_MAP[eventType] || eventType, eventData: norm };
+  }
 
-  document.addEventListener('onLoad', function () {
-    // Wire up on-timer nodes
+  function fireInitTriggers() {
+    AREAS.forEach(function (area) {
+      var triggerId = findEventTrigger(area.id, 'init');
+      console.log('[Alchemy] init trigger for', area.name + ':', triggerId || 'none');
+      if (!triggerId) return;
+      var cmd = executeGraph(area.id, triggerId, {});
+      if (cmd) renderArea(cmd, {});
+    });
+  }
+
+  function setupTimers() {
     AREAS.forEach(function (area) {
       var g = GRAPHS[area.id];
       if (!g) return;
@@ -524,6 +543,38 @@ export function generateJS(
         }, intervalMs);
       });
     });
+  }
+
+  document.addEventListener('onEventReceived', function (obj) {
+    var detail = obj.detail || obj;
+    console.log('[Alchemy] onEventReceived:', JSON.stringify(detail));
+    var parsed = normalizeEvent(detail);
+    if (!parsed) { console.log('[Alchemy] could not parse event'); return; }
+    console.log('[Alchemy] eventType:', parsed.eventType, 'tipper:', parsed.eventData.tipper, 'amount:', parsed.eventData.amount);
+    AREAS.forEach(function (area) {
+      var triggerId = findEventTrigger(area.id, parsed.eventType);
+      if (!triggerId) { console.log('[Alchemy] no trigger for', parsed.eventType, 'in', area.name); return; }
+      var cmd = executeGraph(area.id, triggerId, parsed.eventData);
+      if (!cmd) return;
+      if (cmd.delayMs > 0) {
+        setTimeout(function() { renderArea(cmd, parsed.eventData); }, cmd.delayMs);
+      } else {
+        renderArea(cmd, parsed.eventData);
+      }
+    });
   });
+
+  var initDone = false;
+  document.addEventListener('onWidgetLoad', function () {
+    if (initDone) return;
+    initDone = true;
+    console.log('[Alchemy] onWidgetLoad fired');
+    fireInitTriggers();
+    setupTimers();
+  });
+
+  // Fire init immediately in case onWidgetLoad already fired or won't fire
+  fireInitTriggers();
+  setupTimers();
 })();`
 }

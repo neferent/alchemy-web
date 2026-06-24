@@ -10,6 +10,7 @@ const props = defineProps<{
   area: Area
   selected: boolean
   drawMode: boolean
+  canvasScale: number
 }>()
 
 const emit = defineEmits<{
@@ -44,6 +45,8 @@ function startEdit(e?: MouseEvent) {
   editName.value = props.area.name
 }
 
+const inverseScale = computed(() => 1 / props.canvasScale)
+
 const graph = computed(() => graphStore.getGraph(props.area.id))
 const nodeCount = computed(() => graph.value.nodes.length)
 const edgeCount = computed(() => graph.value.edges.length)
@@ -72,7 +75,7 @@ function commitEdit() {
     }"
     @mousedown="onBodyMouseDown"
   >
-    <div class="area-actions" @mousedown.stop>
+    <div class="area-actions" :style="{ transform: `scale(${inverseScale})` }" @mousedown.stop>
       <!-- name — always visible -->
       <div class="area-name-pill" @dblclick.stop="startEdit">
         <template v-if="editing">
@@ -92,7 +95,7 @@ function commitEdit() {
 
       <!-- action buttons — selected only, pinned right -->
       <template v-if="selected && !drawMode">
-        <div class="info-wrap" style="margin-left: auto" @click.stop>
+        <div class="info-wrap" @click.stop>
           <button class="area-action-btn" title="Area info">
             <Info :size="13" />
           </button>
@@ -118,6 +121,7 @@ function commitEdit() {
         v-for="handle in HANDLES"
         :key="handle"
         :class="`handle handle-${handle}`"
+        :style="{ '--inv': inverseScale }"
         @mousedown.stop="onHandleMouseDown(handle, $event)"
       />
     </template>
@@ -129,7 +133,7 @@ function commitEdit() {
   position: absolute;
   border: 1.5px solid var(--color);
   background: color-mix(in srgb, var(--color) 7%, transparent);
-  transition: background 0.1s;
+  transition: background 120ms ease;
 }
 
 .area.interactive {
@@ -150,18 +154,18 @@ function commitEdit() {
   position: absolute;
   top: -34px;
   left: 0;
-  right: 0;
   height: 26px;
   display: flex;
   align-items: center;
   z-index: 20;
   padding: 0 0 0 6px;
   gap: 2px;
+  transform-origin: bottom left;
+  white-space: nowrap;
 }
 
 .area-name-pill {
-  flex: 1;
-  min-width: 0;
+  flex: none;
   height: 22px;
   padding: 0 4px 0 0;
   color: var(--color);
@@ -174,7 +178,7 @@ function commitEdit() {
   display: flex;
   align-items: center;
   cursor: default;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 
 .area-name-pill:has(.area-name-input) {
@@ -198,7 +202,7 @@ function commitEdit() {
   justify-content: center;
   padding: 0;
   opacity: 0.7;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 .area-action-btn:hover {
   opacity: 1;
@@ -214,12 +218,12 @@ function commitEdit() {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 5px;
+  background: var(--surface-3);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
   padding: 7px 9px;
   min-width: 160px;
-  box-shadow: 0 4px 16px #0008;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   z-index: 100;
   pointer-events: none;
 }
@@ -237,13 +241,13 @@ function commitEdit() {
 }
 
 .info-label {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .info-val {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -268,9 +272,9 @@ function commitEdit() {
 /* Resize handles */
 .handle {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #fff;
+  width: calc(8px * var(--inv));
+  height: calc(8px * var(--inv));
+  background: var(--text);
   border: 1.5px solid var(--color);
   border-radius: 2px;
   z-index: 10;

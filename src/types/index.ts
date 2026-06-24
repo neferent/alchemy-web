@@ -12,10 +12,10 @@ export interface Area {
 export type NodeCategory = 'trigger' | 'lifecycle' | 'transition' | 'logic'
 
 export const NODE_CATEGORY_COLORS: Record<NodeCategory, string> = {
-  trigger:    '#FFBE72',
-  lifecycle:  '#C57BFF',
-  transition: '#72D5FF',
-  logic:      '#91979A',
+  trigger:    '#E8A862',
+  lifecycle:  '#B68AE5',
+  transition: '#5DB8D9',
+  logic:      '#7C8896',
 }
 
 export interface NodeTypeDefinition {
@@ -27,34 +27,34 @@ export interface NodeTypeDefinition {
 }
 
 export const NODE_TYPES: NodeTypeDefinition[] = [
-  { type: 'on-event',   label: 'On Event',             category: 'trigger',    icon: 'icon-alert-box' },
-  { type: 'on-timer',   label: 'On Timer',             category: 'trigger',    icon: 'icon-time' },
-  { type: 'end-signal', label: 'End Signal',           category: 'trigger',    icon: 'icon-stop-recording' },
-  { type: 'transient',  label: 'Transient Container',  category: 'lifecycle',  icon: 'icon-record' },
-  { type: 'persistent', label: 'Persistent Container', category: 'lifecycle',  icon: 'icon-lock-2' },
-  { type: 'audio',      label: 'Audio',                category: 'lifecycle',  icon: 'icon-audio' },
-  { type: 'fade-in',    label: 'Fade In',              category: 'transition', icon: 'icon-transition' },
-  { type: 'fade-out',   label: 'Fade Out',             category: 'transition', icon: 'icon-transition' },
-  { type: 'slide-in',   label: 'Slide In',             category: 'transition', icon: 'icon-expand-1' },
-  { type: 'condition',  label: 'Condition',            category: 'logic',      icon: 'icon-settings-3' },
-  { type: 'delay',      label: 'Delay',                category: 'logic',      icon: 'icon-time' },
-  { type: 'set-var',    label: 'Set Variable',         category: 'logic',      icon: 'icon-edit' },
-  { type: 'get-var',    label: 'Get Variable',         category: 'logic',      icon: 'icon-information' },
-  { type: 'reset-var',  label: 'Reset Variable',       category: 'logic',      icon: 'icon-reset' },
-  { type: 'math',       label: 'Math',                 category: 'logic',      icon: 'icon-stats',                   advanced: true },
-  { type: 'compare',    label: 'Compare',              category: 'logic',      icon: 'icon-balance',                 advanced: true },
-  { type: 'clamp',      label: 'Clamp',                category: 'logic',      icon: 'icon-align-center-horizontal', advanced: true },
-  { type: 'random',     label: 'Random',               category: 'logic',      icon: 'icon-shuffle',                 advanced: true },
-  { type: 'str-format', label: 'String Format',        category: 'logic',      icon: 'icon-widgets',                 advanced: true },
-  { type: 'to-number',  label: 'To Number',            category: 'logic',      icon: 'icon-filter',                  advanced: true },
-  { type: 'to-string',  label: 'To String',            category: 'logic',      icon: 'icon-text-transform',          advanced: true },
+  { type: 'on-event',   label: 'On Event',             category: 'trigger',    icon: 'bell-ring' },
+  { type: 'on-timer',   label: 'On Timer',             category: 'trigger',    icon: 'timer' },
+  { type: 'end-signal', label: 'End Signal',           category: 'trigger',    icon: 'circle-stop' },
+  { type: 'transient',  label: 'Transient Container',  category: 'lifecycle',  icon: 'box-select' },
+  { type: 'persistent', label: 'Persistent Container', category: 'lifecycle',  icon: 'lock' },
+  { type: 'audio',      label: 'Audio',                category: 'lifecycle',  icon: 'volume-2' },
+  { type: 'fade-in',    label: 'Fade In',              category: 'transition', icon: 'blend' },
+  { type: 'fade-out',   label: 'Fade Out',             category: 'transition', icon: 'blend' },
+  { type: 'slide-in',   label: 'Slide In',             category: 'transition', icon: 'move-right' },
+  { type: 'condition',  label: 'Condition',            category: 'logic',      icon: 'sliders-horizontal' },
+  { type: 'delay',      label: 'Delay',                category: 'logic',      icon: 'clock' },
+  { type: 'set-var',    label: 'Set Variable',         category: 'logic',      icon: 'pencil' },
+  { type: 'get-var',    label: 'Get Variable',         category: 'logic',      icon: 'info' },
+  { type: 'reset-var',  label: 'Reset Variable',       category: 'logic',      icon: 'rotate-ccw' },
+  { type: 'math',       label: 'Math',                 category: 'logic',      icon: 'bar-chart',                    advanced: true },
+  { type: 'compare',    label: 'Compare',              category: 'logic',      icon: 'scale',                        advanced: true },
+  { type: 'clamp',      label: 'Clamp',                category: 'logic',      icon: 'align-center-horizontal',      advanced: true },
+  { type: 'random',     label: 'Random',               category: 'logic',      icon: 'shuffle',                      advanced: true },
+  { type: 'str-format', label: 'String Format',        category: 'logic',      icon: 'layout-grid',                  advanced: true },
+  { type: 'to-number',  label: 'To Number',            category: 'logic',      icon: 'filter',                       advanced: true },
+  { type: 'to-string',  label: 'To String',            category: 'logic',      icon: 'case-sensitive',               advanced: true },
 ]
 
 // ── Element model ─────────────────────────────────────────────────────────────
 // Visual elements (image / text / video / color) are no longer graph nodes.
 // They live in the elements store, keyed by container nodeId.
 
-export type ElementType = 'image' | 'text' | 'video' | 'color'
+export type ElementType = 'image' | 'text' | 'video' | 'color' | 'gif'
 
 export interface ElementEffects {
   opacity: number

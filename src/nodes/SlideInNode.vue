@@ -7,7 +7,7 @@ const props = defineProps<{ data: { duration: number; direction: string } }>()
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-expand-1" title="Slide In" category="transition">
+  <BaseNode icon="move-right" title="Slide In" category="transition">
     <div class="node-field">
       <span class="node-label">From</span>
       <select v-model="props.data.direction" class="node-select">

@@ -20,7 +20,7 @@ const vars = computed(() => EVENT_VARS[props.data.event] ?? [])
 </script>
 
 <template>
-  <BaseNode icon="icon-alert-box" title="On Event" category="trigger">
+  <BaseNode icon="bell-ring" title="On Event" category="trigger">
     <div class="node-field">
       <span class="node-label">Event</span>
       <select v-model="props.data.event" class="node-select">
@@ -50,12 +50,12 @@ const vars = computed(() => EVENT_VARS[props.data.event] ?? [])
 }
 
 .node-var-chip {
-  font-size: 9px;
+  font-size: 11px;
   font-family: monospace;
-  color: #80F5D2;
-  background: rgba(128, 245, 210, 0.08);
-  border: 1px solid rgba(128, 245, 210, 0.2);
-  border-radius: 3px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-tint-md);
+  border-radius: var(--radius-sm);
   padding: 1px 4px;
 }
 </style>

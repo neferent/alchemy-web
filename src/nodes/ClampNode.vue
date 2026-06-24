@@ -7,7 +7,7 @@ const props = defineProps<{ data: { value: string; min: string; max: string } }>
 
 <template>
   <Handle type="target" :position="Position.Left" />
-  <BaseNode icon="icon-align-center-horizontal" title="Clamp" category="logic">
+  <BaseNode icon="align-center-horizontal" title="Clamp" category="logic">
     <div class="node-field">
       <span class="node-label">Value</span>
       <input v-model="props.data.value" type="text" placeholder="{$hype}" class="node-input" />
