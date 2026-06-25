@@ -72,6 +72,131 @@ function makeElement(partial: Partial<ElementData> & { id: string; type: Element
   }
 }
 
+export function buildSampleScene(): PresetScene {
+  const alertAreaId = uid()
+  const goalAreaId = uid()
+  const bannerAreaId = uid()
+
+  // --- Alert area: donation with condition ---
+  const alertTrigger = uid()
+  const alertCondition = uid()
+  const bigFadeIn = uid()
+  const bigContainer = uid()
+  const bigDelay = uid()
+  const bigFadeOut = uid()
+  const smallSlideIn = uid()
+  const smallContainer = uid()
+  const smallDelay = uid()
+  const smallFadeOut = uid()
+
+  // --- Goal area: persistent follower counter ---
+  const goalInit = uid()
+  const goalPersistent = uid()
+  const goalFollowTrigger = uid()
+  const goalSetVar = uid()
+
+  // --- Banner area: timed rotation ---
+  const bannerTimer = uid()
+  const bannerFadeIn = uid()
+  const bannerContainer = uid()
+  const bannerDelay = uid()
+  const bannerFadeOut = uid()
+
+  return {
+    areas: [
+      { id: alertAreaId, name: 'Donation Alert', x: 25, y: 10, width: 50, height: 18, color: '#f59e0b' },
+      { id: goalAreaId, name: 'Follower Goal', x: 10, y: 85, width: 80, height: 8, color: '#22c55e' },
+      { id: bannerAreaId, name: 'Info Banner', x: 30, y: 75, width: 40, height: 8, color: '#06b6d4' },
+    ],
+    graphs: {
+      [alertAreaId]: {
+        nodes: [
+          { id: alertTrigger, type: 'on-event', position: { x: 40, y: 140 }, data: { event: 'donation' } },
+          { id: alertCondition, type: 'condition', position: { x: 260, y: 120 }, data: { operator: '>=', value: 25 } },
+          { id: bigFadeIn, type: 'fade-in', position: { x: 500, y: 40 }, data: { duration: 0.3 } },
+          { id: bigContainer, type: 'transient', position: { x: 720, y: 40 }, data: { duration: 7 } },
+          { id: bigDelay, type: 'delay', position: { x: 720, y: 170 }, data: { duration: 6 } },
+          { id: bigFadeOut, type: 'fade-out', position: { x: 940, y: 170 }, data: { duration: 0.5 } },
+          { id: smallSlideIn, type: 'slide-in', position: { x: 500, y: 280 }, data: { duration: 0.4, direction: 'top' } },
+          { id: smallContainer, type: 'transient', position: { x: 720, y: 280 }, data: { duration: 4 } },
+          { id: smallDelay, type: 'delay', position: { x: 720, y: 410 }, data: { duration: 3 } },
+          { id: smallFadeOut, type: 'fade-out', position: { x: 940, y: 410 }, data: { duration: 0.5 } },
+        ],
+        edges: [
+          { id: uid(), source: alertTrigger, target: alertCondition },
+          { id: uid(), source: alertCondition, target: bigFadeIn, sourceHandle: 'true' },
+          { id: uid(), source: bigFadeIn, target: bigContainer },
+          { id: uid(), source: alertCondition, target: bigDelay, sourceHandle: 'true' },
+          { id: uid(), source: bigDelay, target: bigFadeOut },
+          { id: uid(), source: alertCondition, target: smallSlideIn, sourceHandle: 'false' },
+          { id: uid(), source: smallSlideIn, target: smallContainer },
+          { id: uid(), source: alertCondition, target: smallDelay, sourceHandle: 'false' },
+          { id: uid(), source: smallDelay, target: smallFadeOut },
+        ],
+      },
+      [goalAreaId]: {
+        nodes: [
+          { id: goalInit, type: 'on-event', position: { x: 40, y: 80 }, data: { event: 'init' } },
+          { id: goalPersistent, type: 'persistent', position: { x: 300, y: 80 }, data: {} },
+          { id: goalFollowTrigger, type: 'on-event', position: { x: 40, y: 220 }, data: { event: 'follow' } },
+          { id: goalSetVar, type: 'set-var', position: { x: 300, y: 220 }, data: { variable: 'followers', mode: 'increment', value: 1 } },
+        ],
+        edges: [
+          { id: uid(), source: goalInit, target: goalPersistent },
+          { id: uid(), source: goalFollowTrigger, target: goalSetVar },
+        ],
+      },
+      [bannerAreaId]: {
+        nodes: [
+          { id: bannerTimer, type: 'on-timer', position: { x: 40, y: 100 }, data: { interval: 30 } },
+          { id: bannerFadeIn, type: 'fade-in', position: { x: 260, y: 60 }, data: { duration: 0.5 } },
+          { id: bannerContainer, type: 'transient', position: { x: 480, y: 60 }, data: { duration: 8 } },
+          { id: bannerDelay, type: 'delay', position: { x: 480, y: 200 }, data: { duration: 7 } },
+          { id: bannerFadeOut, type: 'fade-out', position: { x: 700, y: 200 }, data: { duration: 0.5 } },
+        ],
+        edges: [
+          { id: uid(), source: bannerTimer, target: bannerFadeIn },
+          { id: uid(), source: bannerFadeIn, target: bannerContainer },
+          { id: uid(), source: bannerTimer, target: bannerDelay },
+          { id: uid(), source: bannerDelay, target: bannerFadeOut },
+        ],
+      },
+    },
+    layout: {
+      [alertAreaId]: {
+        [bigContainer]: { x: 0, y: 0, w: 100, h: 100, z: 0 },
+        [smallContainer]: { x: 0, y: 0, w: 100, h: 100, z: 0 },
+      },
+      [goalAreaId]: {
+        [goalPersistent]: { x: 0, y: 0, w: 100, h: 100, z: 0 },
+      },
+      [bannerAreaId]: {
+        [bannerContainer]: { x: 0, y: 0, w: 100, h: 100, z: 0 },
+      },
+    },
+    elements: {
+      [bigContainer]: [
+        makeElement({ id: uid(), type: 'color', fillColor: '#1a0a2e', effects: { opacity: 0.95, shadow: { enabled: false, x: 4, y: 4, blur: 8, spread: 0, color: '#000000', opacity: 0.5 }, animation: { enabled: false, name: 'bounce', duration: 1, delay: 0, repeat: 1 } } }),
+        makeElement({ id: uid(), type: 'text', content: 'HUGE DONATION!', fontSize: 36, fontWeight: 700, textColor: '#fbbf24', effects: { opacity: 1, shadow: { enabled: true, x: 0, y: 0, blur: 12, spread: 0, color: '#f59e0b', opacity: 0.6 }, animation: { enabled: true, name: 'pulse', duration: 0.8, delay: 0, repeat: 0 } } }),
+        makeElement({ id: uid(), type: 'text', content: '{$tipper} just donated {$formattedAmount}!', fontSize: 20, fontWeight: 400, textColor: '#e2e8f0' }),
+        makeElement({ id: uid(), type: 'text', content: '{$message}', fontSize: 16, textColor: '#94a3b8' }),
+      ],
+      [smallContainer]: [
+        makeElement({ id: uid(), type: 'color', fillColor: '#0f172a', effects: { opacity: 0.9, shadow: { enabled: false, x: 4, y: 4, blur: 8, spread: 0, color: '#000000', opacity: 0.5 }, animation: { enabled: false, name: 'bounce', duration: 1, delay: 0, repeat: 1 } } }),
+        makeElement({ id: uid(), type: 'text', content: '{$tipper} donated {$formattedAmount}', fontSize: 22, fontWeight: 500, textColor: '#cbd5e1' }),
+      ],
+      [goalPersistent]: [
+        makeElement({ id: uid(), type: 'color', fillColor: '#064e3b', effects: { opacity: 0.8, shadow: { enabled: false, x: 4, y: 4, blur: 8, spread: 0, color: '#000000', opacity: 0.5 }, animation: { enabled: false, name: 'bounce', duration: 1, delay: 0, repeat: 1 } } }),
+        makeElement({ id: uid(), type: 'text', content: 'Follower Goal: {$followers} / 100', fontSize: 18, fontWeight: 600, textColor: '#4ade80' }),
+      ],
+      [bannerContainer]: [
+        makeElement({ id: uid(), type: 'color', fillColor: '#0c4a6e', effects: { opacity: 0.85, shadow: { enabled: false, x: 4, y: 4, blur: 8, spread: 0, color: '#000000', opacity: 0.5 }, animation: { enabled: false, name: 'bounce', duration: 1, delay: 0, repeat: 1 } } }),
+        makeElement({ id: uid(), type: 'text', content: 'Thanks for watching! Follow for more content.', fontSize: 18, fontWeight: 500, textColor: '#7dd3fc' }),
+      ],
+    },
+  }
+}
+
 export const PRESETS: Preset[] = [
   {
     id: 'donation-alert',

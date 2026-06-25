@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import AppCanvas from './components/AppCanvas.vue'
 import NodeGraphPanel from './components/NodeGraphPanel.vue'
 import NodePalette from './components/NodePalette.vue'
@@ -136,10 +136,25 @@ function onDividerMousedown(e: MouseEvent) {
   window.addEventListener('mouseup', onUp)
 }
 
+const hasNudged = ref(false)
+
 function closeHelp() {
   showHelp.value = false
   localStorage.setItem(HELP_SEEN_KEY, '1')
+  if (!hasNudged.value && !canvasStore.areas.length) {
+    hasNudged.value = true
+    uiStore.nudgeDrawTool = true
+    setTimeout(() => { uiStore.nudgeDrawTool = false }, 3000)
+  }
 }
+
+watch(() => canvasStore.areas.length, (len, oldLen) => {
+  if (oldLen === 0 && len === 1) {
+    uiStore.nudgeDrawTool = false
+    uiStore.showPaletteTooltip = true
+    setTimeout(() => { uiStore.showPaletteTooltip = false }, 6000)
+  }
+})
 
 function loadPreset(presetId: string) {
   const preset = PRESETS.find(p => p.id === presetId)
@@ -229,7 +244,7 @@ onUnmounted(() => {
 
       <!-- Right content: canvas (top) + divider + node graph (bottom) -->
       <div class="right-col">
-        <AppCanvas class="canvas-pane" @open-scene="loadScene" />
+        <AppCanvas class="canvas-pane" @open-scene="loadScene" @open-help="showHelp = true" />
         <div
           class="panel-divider"
           :class="{ dragging: isDragging, collapsed: graphCollapsed }"

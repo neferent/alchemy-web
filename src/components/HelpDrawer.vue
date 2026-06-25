@@ -1,8 +1,19 @@
 <script setup lang="ts">
-import { X, ChevronRight } from 'lucide-vue-next'
-import { PRESETS } from '@/presets'
+import { X, ChevronRight, Download } from 'lucide-vue-next'
+import { PRESETS, buildSampleScene } from '@/presets'
 
 defineEmits<{ close: []; loadPreset: [id: string] }>()
+
+function downloadSample() {
+  const scene = buildSampleScene()
+  const payload = JSON.stringify({ version: 2, ...scene }, null, 2)
+  const blob = new Blob([payload], { type: 'application/json' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'sample-scene.alchemy'
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
 </script>
 
 <template>
@@ -79,6 +90,17 @@ defineEmits<{ close: []; loadPreset: [id: string] }>()
                 <ChevronRight :size="16" class="preset-arrow" />
               </button>
             </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">Sample Scene</h3>
+            <p class="text-body section-text" style="margin-bottom: 12px;">
+              Download a complex scene file with multiple areas to reverse-engineer. Includes a tiered donation alert, persistent follower goal, and a timed info banner.
+            </p>
+            <button class="download-btn" @click="downloadSample">
+              <Download :size="14" />
+              Download sample-scene.alchemy
+            </button>
           </section>
 
           <section class="section">
@@ -241,6 +263,25 @@ kbd {
   border: 0.5px solid var(--border-strong);
   border-radius: var(--radius-sm);
   color: var(--text);
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface-3);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.download-btn:hover {
+  background: var(--surface-4);
+  border-color: var(--border-hover);
 }
 
 .preset-list {

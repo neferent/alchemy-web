@@ -9,6 +9,9 @@ export const useUiStore = defineStore('ui', () => {
   const hoveredLayoutItemId = ref<string | null>(null)
   const draggingElementType = ref<ElementType | null>(null)
 
+  const nudgeDrawTool = ref(false)
+  const showPaletteTooltip = ref(false)
+
   function selectNode(id: string | null, type: string | null) {
     selectedNodeId.value = id
     selectedNodeType.value = type
@@ -30,6 +33,7 @@ export const useUiStore = defineStore('ui', () => {
   return {
     selectedNodeId, selectedNodeType, selectedLayoutItemId,
     hoveredLayoutItemId, draggingElementType,
+    nudgeDrawTool, showPaletteTooltip,
     selectNode, selectLayoutItem, hoverLayoutItem, setDraggingElementType,
   }
 })

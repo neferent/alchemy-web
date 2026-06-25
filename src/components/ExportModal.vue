@@ -111,7 +111,7 @@ async function copy(tab: 'html' | 'css' | 'js') {
   border: 0.5px solid var(--border-strong);
   border-radius: var(--radius-lg);
   width: min(860px, 94vw);
-  max-height: 84vh;
+  height: min(600px, 84vh);
   display: flex;
   flex-direction: column;
   overflow: hidden;

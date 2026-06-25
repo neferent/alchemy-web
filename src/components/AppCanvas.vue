@@ -19,7 +19,7 @@ const layoutStore = useLayoutStore()
 const runtimeStore = useRuntimeStore()
 const uiStore = useUiStore()
 
-defineEmits<{ 'open-scene': [] }>()
+defineEmits<{ 'open-scene': []; 'open-help': [] }>()
 
 // ── Canvas sizing ──────────────────────────────────────────────────────────────
 
@@ -538,7 +538,7 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
       <button class="tool-btn" :class="{ active: !drawMode }" title="Select (V)" @click="drawMode = false">
         <component :is="ICONS['mouse-pointer-2']" :size="14" />
       </button>
-      <button class="tool-btn" :class="{ active: drawMode }" title="Draw Area (A)" @click="drawMode = true">
+      <button class="tool-btn" :class="{ active: drawMode, nudge: uiStore.nudgeDrawTool }" title="Draw Area (A)" @click="drawMode = true; uiStore.nudgeDrawTool = false">
         <component :is="ICONS['square']" :size="14" />
       </button>
       <div class="toolbar-sep" />
@@ -811,8 +811,11 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
             </div>
           </div>
         </div>
-        <div class="empty-or">or</div>
-        <button class="empty-open-btn" @click.stop="$emit('open-scene')">Open an existing .alchemy file</button>
+        <div class="empty-actions">
+          <button class="empty-open-btn" @click.stop="$emit('open-scene')">Open an .alchemy file</button>
+          <span class="empty-or">or</span>
+          <button class="empty-open-btn" @click.stop="$emit('open-help')">View getting started guide</button>
+        </div>
       </div>
     </div>
   </div>
@@ -852,6 +855,15 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
 }
 .tool-btn:hover { border-color: var(--text-faint); color: var(--text); }
 .tool-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.tool-btn.nudge {
+  animation: nudge-pulse 1s ease-in-out infinite;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+@keyframes nudge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(142, 158, 173, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(142, 158, 173, 0); }
+}
 
 .toolbar-sep { width: 1px; height: 18px; background: var(--border); margin: 0 4px; }
 .toolbar-spacer { flex: 1; }
@@ -1007,6 +1019,13 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   font-weight: 600;
 }
 
+.empty-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: all;
+}
+
 .empty-or {
   color: var(--text-faint);
   font-size: 12px;
@@ -1020,7 +1039,6 @@ function fire() { runtimeStore.fireEvent(selectedEvent.value) }
   font-size: 12px;
   padding: 6px 16px;
   cursor: pointer;
-  pointer-events: all;
   transition: all 120ms ease;
 }
 .empty-open-btn:hover {

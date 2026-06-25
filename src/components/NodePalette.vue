@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import { NODE_TYPES, NODE_CATEGORY_COLORS, type NodeCategory } from '@/types'
 import { ICONS } from '@/utils/icons'
+import { useUiStore } from '@/stores/ui'
+
+const uiStore = useUiStore()
 
 const categories: { key: NodeCategory; label: string }[] = [
   { key: 'trigger',    label: 'Triggers' },
@@ -30,7 +33,7 @@ function onDragStart(e: DragEvent, type: string) {
 </script>
 
 <template>
-  <aside class="palette">
+  <aside class="palette" :class="{ 'tooltip-active': uiStore.showPaletteTooltip }">
     <div v-for="cat in categories" :key="cat.key" class="palette-group">
       <div
         class="palette-category"
@@ -83,6 +86,43 @@ function onDragStart(e: DragEvent, type: string) {
   background: var(--surface-2);
   overflow-y: auto;
   padding: 8px 0;
+  position: relative;
+}
+
+.palette.tooltip-active::before {
+  content: 'Drag nodes from here into the graph panel →';
+  position: absolute;
+  top: 4px;
+  left: calc(100% + 10px);
+  white-space: nowrap;
+  background: var(--surface-4);
+  border: 0.5px solid var(--border-strong);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  animation: tooltip-fade 0.3s ease;
+  pointer-events: none;
+}
+
+.palette.tooltip-active::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: calc(100% + 4px);
+  border: 6px solid transparent;
+  border-right-color: var(--surface-4);
+  z-index: 100;
+  pointer-events: none;
+  animation: tooltip-fade 0.3s ease;
+}
+
+@keyframes tooltip-fade {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .palette-group {
