@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X, ChevronRight, Download } from 'lucide-vue-next'
+import { X, ChevronRight, Download, ExternalLink } from 'lucide-vue-next'
 import { PRESETS, buildSampleScene } from '@/presets'
 
 defineEmits<{ close: []; loadPreset: [id: string] }>()
@@ -37,6 +37,16 @@ function downloadSample() {
             </p>
           </section>
 
+          <a
+            href="https://streamlabs.com/dashboard#/widgets/customwidget"
+            target="_blank"
+            rel="noopener"
+            class="sl-link"
+          >
+            <ExternalLink :size="14" />
+            Open Streamlabs Custom Widget
+          </a>
+
           <section class="section">
             <h3 class="section-title">Quick Start</h3>
             <ol class="steps">
@@ -66,7 +76,7 @@ function downloadSample() {
               </li>
               <li>
                 <strong>Export</strong>
-                <span>Click <em>Export Widget</em> to generate standalone HTML, CSS, and JavaScript you can paste into a browser source.</span>
+                <span>Click <em>Export Widget</em> to generate standalone HTML, CSS, and JavaScript you can paste into your <a href="https://streamlabs.com/dashboard#/widgets/customwidget" target="_blank" rel="noopener" class="inline-link">Streamlabs Custom Widget <ExternalLink :size="11" style="vertical-align: middle" /></a> or any browser source.</span>
               </li>
             </ol>
           </section>
@@ -334,6 +344,34 @@ kbd {
 }
 .preset-card:hover .preset-arrow {
   color: var(--text-muted);
+}
+
+.sl-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin-bottom: 28px;
+  background: var(--accent-dim);
+  border: 0.5px solid var(--accent);
+  border-radius: var(--radius-md);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.sl-link:hover {
+  background: var(--surface-4);
+}
+
+.inline-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+.inline-link:hover {
+  text-decoration: underline;
 }
 
 /* Slide transition */

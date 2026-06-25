@@ -91,6 +91,11 @@ async function copy(tab: 'html' | 'css' | 'js') {
       </div>
 
       <pre class="code-block"><code>{{ activeCode }}</code></pre>
+
+      <p class="modal-disclaimer">
+        This is custom-generated code. Always review and understand any code before pasting it
+        into a website or application.
+      </p>
     </div>
   </div>
 </template>
@@ -230,5 +235,11 @@ async function copy(tab: 'html' | 'css' | 'js') {
   color: var(--text);
   white-space: pre;
   tab-size: 2;
+}
+.modal-disclaimer {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 16px 14px;
+  flex-shrink: 0;
 }
 </style>
