@@ -5,6 +5,9 @@ import NodeGraphPanel from './components/NodeGraphPanel.vue'
 import NodePalette from './components/NodePalette.vue'
 import ElementsPanel from './components/ElementsPanel.vue'
 import ExportModal from './components/ExportModal.vue'
+import HelpDrawer from './components/HelpDrawer.vue'
+import HelpButton from './components/HelpButton.vue'
+import { PRESETS } from './presets'
 import { useCanvasStore } from './stores/canvas'
 import { useGraphStore } from './stores/graph'
 import { useLayoutStore } from './stores/layout'
@@ -21,6 +24,9 @@ const runtimeStore = useRuntimeStore()
 
 const selectedArea = computed(() => canvasStore.selectedArea)
 const showExport = ref(false)
+const showHelp = ref(false)
+
+const HELP_SEEN_KEY = 'alchemy:helpSeen'
 
 function newScene() {
   if (!confirm('Start a new scene? Unsaved changes will be lost.')) return
@@ -130,9 +136,31 @@ function onDividerMousedown(e: MouseEvent) {
   window.addEventListener('mouseup', onUp)
 }
 
+function closeHelp() {
+  showHelp.value = false
+  localStorage.setItem(HELP_SEEN_KEY, '1')
+}
+
+function loadPreset(presetId: string) {
+  const preset = PRESETS.find(p => p.id === presetId)
+  if (!preset) return
+  if (canvasStore.areas.length && !confirm('Load preset? This will replace your current scene.')) return
+  const scene = preset.build()
+  uiStore.selectNode(null, null)
+  uiStore.selectLayoutItem(null)
+  runtimeStore.resetSession()
+  canvasStore.areas = scene.areas
+  canvasStore.selectedAreaId = null
+  graphStore.graphs = scene.graphs
+  layoutStore.layout = scene.layout
+  elementsStore.elements = scene.elements
+  closeHelp()
+}
+
 function onGlobalKeyDown(e: KeyboardEvent) {
   const tag = (e.target as HTMLElement).tagName
   if (e.key === 'Escape') {
+    if (showHelp.value) { closeHelp(); return }
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
       (e.target as HTMLElement).blur()
       return
@@ -155,6 +183,10 @@ onMounted(() => {
   else localStorage.removeItem(STORAGE_KEY)
 
   window.addEventListener('keydown', onGlobalKeyDown)
+
+  if (!localStorage.getItem(HELP_SEEN_KEY)) {
+    showHelp.value = true
+  }
 })
 
 onUnmounted(() => {
@@ -184,6 +216,8 @@ onUnmounted(() => {
     </header>
 
     <ExportModal v-if="showExport" @close="showExport = false" />
+    <HelpDrawer v-if="showHelp" @close="closeHelp" @load-preset="loadPreset" />
+    <HelpButton v-if="!showHelp" @click="showHelp = true" />
 
     <main class="app-main" :style="{ userSelect: isDragging ? 'none' : 'auto' }">
       <!-- Left sidebar: elements panel (top) + node palette (bottom) -->
