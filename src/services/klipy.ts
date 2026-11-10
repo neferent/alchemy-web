@@ -1,7 +1,12 @@
-const API_KEY = import.meta.env.VITE_KLIPY_API_KEY ?? ''
-const GIF_BASE = `https://api.klipy.com/api/v1/${API_KEY}/gifs`
-const CLIP_BASE = `https://api.klipy.com/api/v1/${API_KEY}/clips`
-const STICKER_BASE = `https://api.klipy.com/api/v1/${API_KEY}/stickers`
+// All requests go through our own /api/klipy proxy, which adds the API key server-side.
+type Kind = 'gifs' | 'clips' | 'stickers'
+
+function klipyUrl(kind: Kind, endpoint: 'search' | 'trending' | 'categories', params?: URLSearchParams): string {
+  const qs = new URLSearchParams(params)
+  qs.set('kind', kind)
+  qs.set('endpoint', endpoint)
+  return `/api/klipy?${qs}`
+}
 
 export interface KlipyGif {
   id: string
@@ -78,7 +83,7 @@ export async function searchGifs(query: string, page = 1, perPage = 20): Promise
     per_page: String(perPage),
     content_filter: 'high',
   })
-  const res = await fetch(`${GIF_BASE}/search?${params}`)
+  const res = await fetch(klipyUrl('gifs', 'search', params))
   if (!res.ok) return []
   const json: KlipyGifResponse = await res.json()
   return (json.data?.data ?? []).map(item => {
@@ -93,7 +98,7 @@ export async function trendingGifs(page = 1, perPage = 20): Promise<KlipyGif[]> 
     per_page: String(perPage),
     content_filter: 'high',
   })
-  const res = await fetch(`${GIF_BASE}/trending?${params}`)
+  const res = await fetch(klipyUrl('gifs', 'trending', params))
   if (!res.ok) return []
   const json: KlipyGifResponse = await res.json()
   return (json.data?.data ?? []).map(item => {
@@ -111,7 +116,7 @@ export async function searchClips(query: string, page = 1, perPage = 20): Promis
     per_page: String(perPage),
     content_filter: 'high',
   })
-  const res = await fetch(`${CLIP_BASE}/search?${params}`)
+  const res = await fetch(klipyUrl('clips', 'search', params))
   if (!res.ok) return []
   const json: KlipyClipResponse = await res.json()
   return (json.data?.data ?? []).map(item => {
@@ -126,7 +131,7 @@ export async function trendingClips(page = 1, perPage = 20): Promise<KlipyClip[]
     per_page: String(perPage),
     content_filter: 'high',
   })
-  const res = await fetch(`${CLIP_BASE}/trending?${params}`)
+  const res = await fetch(klipyUrl('clips', 'trending', params))
   if (!res.ok) return []
   const json: KlipyClipResponse = await res.json()
   return (json.data?.data ?? []).map(item => {
@@ -136,7 +141,7 @@ export async function trendingClips(page = 1, perPage = 20): Promise<KlipyClip[]
 }
 
 export async function clipCategories(): Promise<KlipyCategory[]> {
-  const res = await fetch(`${CLIP_BASE}/categories`)
+  const res = await fetch(klipyUrl('clips', 'categories'))
   if (!res.ok) return []
   const json = await res.json()
   const items: { category: string; query: string }[] = json.data?.categories ?? []
@@ -168,7 +173,7 @@ export async function searchStickers(query: string, page = 1, perPage = 20): Pro
     per_page: String(perPage),
     content_filter: 'high',
   })
-  const res = await fetch(`${STICKER_BASE}/search?${params}`)
+  const res = await fetch(klipyUrl('stickers', 'search', params))
   if (!res.ok) return []
   const json: KlipyStickerResponse = await res.json()
   return (json.data?.data ?? []).map(item => {
@@ -183,7 +188,7 @@ export async function trendingStickers(page = 1, perPage = 20): Promise<KlipySti
     per_page: String(perPage),
     content_filter: 'high',
   })
-  const res = await fetch(`${STICKER_BASE}/trending?${params}`)
+  const res = await fetch(klipyUrl('stickers', 'trending', params))
   if (!res.ok) return []
   const json: KlipyStickerResponse = await res.json()
   return (json.data?.data ?? []).map(item => {
